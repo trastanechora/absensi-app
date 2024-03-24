@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
     token: sessionToken?.value as unknown as string,
     secret: process.env.NEXTAUTH_SECRET || '',
   });
-  console.log('[DEBUG] req cookies', currentAccount);
   // @ts-ignore
   if (currentAccount.role !== 'admin') return NextResponse.json({ error: "Your account is unauthorize" }, { status: 403 });
 
@@ -32,6 +31,9 @@ export async function GET(req: NextRequest) {
       ...(filterEmail && { email: { contains: filterEmail }}),
       ...(filterStatus && { status: filterStatus}),
       ...(filterOffice && { officeId: filterOffice}),
+    },
+    include: {
+      office: true
     }
   });
 
@@ -39,7 +41,7 @@ export async function GET(req: NextRequest) {
 };
 
 export async function POST(req: NextRequest) {
-  const { name, role, email, password } = await req.json();
+  const { name, role = 'staff', email, password = 'pas123!', officeId } = await req.json();
   const exists = await prisma.user.findUnique({
     where: {
       email,
@@ -48,13 +50,23 @@ export async function POST(req: NextRequest) {
   if (exists) {
     return NextResponse.json({ error: "Account already exists" }, { status: 400 });
   } else {
+    const payload: {
+      name: string;
+      role: string;
+      email: string;
+      password: string;
+      officeId?: string;
+    } = {
+      name,
+      role,
+      email,
+      password: await hash(password, 10)
+    }
+
+    if (officeId) payload.officeId = officeId;
+
     const user = await prisma.user.create({
-      data: {
-        name,
-        role,
-        email,
-        password: await hash(password, 10),
-      },
+      data: payload,
     });
     return NextResponse.json(user);
   }

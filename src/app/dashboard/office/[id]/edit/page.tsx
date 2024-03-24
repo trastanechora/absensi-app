@@ -12,7 +12,7 @@ import styles from '@/styles/Dashboard.module.css';
 
 import type { Dayjs } from 'dayjs';
 
-const InsertDoctorPage = ({ params }: { params: { id: string } }) => {
+const EditOfficePage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const [_, dispatch] = useNotificationContext()
   const router = useRouter()
@@ -97,12 +97,11 @@ const InsertDoctorPage = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     if (id) {
-      setLoading(true)
+      setLoading(true);
       fetch(`/api/user?id=${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
-          console.warn('responseObject', responseObject)
-          setLoading(false)
+          setLoading(false);
           setValues({
             name: responseObject.name,
             email: responseObject.email,
@@ -118,15 +117,14 @@ const InsertDoctorPage = ({ params }: { params: { id: string } }) => {
       dateOfBirth: datePickerBirthValue?.format('YYYY-MM-DD'),
       serviceStartDate: datePickerStartValue?.format('YYYY-MM-DD'),
     }
-    fetch(`/api/doctor/${id}`, { method: 'PUT', body: JSON.stringify(body) })
+    fetch(`/api/office/${id}`, { method: 'PUT', body: JSON.stringify(body) })
       .then((res) => res.json())
-      .then((responseObject) => {
-        console.log('SUCCESS!', responseObject)
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil ubah data dokter ${values.name}`, severity: 'success' } })
-        router.replace('/doctor')
+      .then((_) => {
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil ubah data lokasi ${values.name}`, severity: 'success' } });
+        router.replace('/dashboard/office')
         setLoading(false)
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal ubah data dokter, error: ${err}`, severity: 'error' } })
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal ubah data lokasi, error: ${err}`, severity: 'error' } });
         setLoading(false)
       })
   }
@@ -254,5 +252,4 @@ const InsertDoctorPage = ({ params }: { params: { id: string } }) => {
   )
 }
 
-InsertDoctorPage.isRequireAuth = true;
-export default InsertDoctorPage;
+export default EditOfficePage;

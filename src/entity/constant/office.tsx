@@ -1,20 +1,17 @@
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import PlaceIcon from '@mui/icons-material/Place';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-export const officeList = [
-  {
-    text: 'Malang',
-    value: '1234-5678',
-  },
-  {
-    text: 'Bogor',
-    value: '8765-4321'
-  }
-]
+export const initialFilterState = {
+  searchString: '',
+  searchType: '',
+  status: '',
+  statusType: 'f_status',
+  office: '',
+  officeType: 'f_office'
+};
 
 export const statusList = [
   {
@@ -25,34 +22,13 @@ export const statusList = [
     text: 'Tidak Aktif',
     value: 'inactive'
   }
-]
-
-export const initialFilterState = {
-  searchString: '',
-  searchType: '',
-  status: '',
-  statusType: 'f_status',
-  office: '',
-  officeType: 'f_office'
-}
+];
 
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
-  { field: "name", headerName: "Nama Karyawan", width: 300, sortable: false },
-  {
-    field: "office", headerName: "Kantor", width: 250, sortable: false,
-    renderCell: (params: any) => {
-      if (params.value === null) return '-'
-      
-      return (
-        <Button variant="text" startIcon={<PlaceIcon />}>
-          {params.value.name}
-        </Button>
-      )
-    }
-  },
-  { field: "email", headerName: "Alamat Email", width: 250, sortable: false },
-  { field: "status", headerName: "Status Akun", width: 200, sortable: false },
-  { field: "address", headerName: "Alamat", width: 200, sortable: false },
+  { field: "name", headerName: "Nama Lokasi", width: 300, sortable: false },
+  { field: "radius", headerName: "Radius", width: 250, sortable: false },
+  { field: "lat", headerName: "Latitude", width: 200, sortable: false },
+  { field: "long", headerName: "Longitude", width: 200, sortable: false },
   {
     field: 'action',
     headerName: 'Tindakan',
@@ -68,6 +44,5 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
 ];
 
 export const FILTER_OBJECT = [
-  { text: "Nama Karyawan", value: "f_name"},
-  { text: "Email", value: "f_email"},
+  { text: "Nama Lokasi", value: "f_name"},
 ];

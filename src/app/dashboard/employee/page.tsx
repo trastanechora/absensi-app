@@ -12,6 +12,7 @@ import { TABLE_HEADER, FILTER_OBJECT, officeList, statusList, initialFilterState
 
 const EmployeePage = () => {
   const [data, setData] = useState<any[]>([]);
+  const [officeOptions, setOfficeOptions] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
@@ -28,6 +29,12 @@ const EmployeePage = () => {
       .then((resObject) => {
         setData(resObject)
         setLoading(false)
+      })
+    
+    fetch(`/api/office/list`)
+      .then((res) => res.json())
+      .then((resObject) => {
+        setOfficeOptions(resObject)
       })
   }, [page, rowPerPage])
 
@@ -75,6 +82,7 @@ const EmployeePage = () => {
     } else if (type === 'edit') {
       router.push(`/dashboard/employee/${rowData.row.id}/edit`);
     } else {
+      // TODO: add delete mechanism
       console.warn('delete', rowData);
     }
   }
@@ -167,7 +175,7 @@ const EmployeePage = () => {
                       onChange={handleFilterChange('office')}
                       fullWidth
                     >
-                      {officeList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
+                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
                     </Select>
                   </FormControl>
                 </Box>

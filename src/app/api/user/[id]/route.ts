@@ -18,17 +18,19 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     },
   });
   if (user) {
-    const { name, role, email, password } = await req.json();
+    const { name, role, email, password, officeId } = await req.json();
     const payload: {
       name?: string;
       role?: string;
       email?: string;
       password?: string;
+      officeId?: string;
     } = {};
 
     if (name) payload.name = name;
     if (role) payload.role = role;
     if (email) payload.email = email;
+    if (officeId) payload.officeId = officeId;
     if (password) payload.password = await hash(password, 10);
 
     const updatedUser = await prisma.user.update({
@@ -38,7 +40,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       data: payload,
     })
 
-    return updatedUser;
+    return NextResponse.json(updatedUser);
   } else {
     return NextResponse.json({ error: "Account not found" }, { status: 400 });
   }

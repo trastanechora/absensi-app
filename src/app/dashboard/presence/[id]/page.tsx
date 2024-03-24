@@ -9,22 +9,20 @@ import Button from '@mui/material/Button';
 
 import styles from '@/styles/Dashboard.module.css'
 
-const DoctorDetailPage = ({ params }: { params: { id: string } }) => {
+const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
   const [isLoading, setLoading] = useState<boolean>(false)
   const [detail, setDetail] = useState<any>({})
   const { id } = params;
 
   const router = useRouter();
-  console.log('[DEBUG] id', id);
 
   useEffect(() => {
     if (id) {
-      setLoading(true)
-      fetch(`/api/user?id=${id}`)
+      setLoading(true);
+      fetch(`/api/presence/${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
-          console.warn('[DEBUG] responseObject', responseObject)
-          setLoading(false)
+          setLoading(false);
           setDetail(responseObject);
         })
     }
@@ -135,5 +133,4 @@ const DoctorDetailPage = ({ params }: { params: { id: string } }) => {
   )
 }
 
-DoctorDetailPage.isRequireAuth = true;
-export default DoctorDetailPage;
+export default PresenceDetailPage;

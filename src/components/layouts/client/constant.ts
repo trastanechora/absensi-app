@@ -1,21 +1,21 @@
-import ContactEmergencyIcon from '@mui/icons-material/ContactEmergency';
-import MedicationLiquidIcon from '@mui/icons-material/MedicationLiquid';
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import RestoreIcon from '@mui/icons-material/Restore';
+import HomeIcon from '@mui/icons-material/Home';
+import AccountIcon from '@mui/icons-material/AccountCircle';
 
 export const menuList = [
   {
-    text: 'Home',
-    icon: ContactEmergencyIcon,
+    text: 'Absensi',
+    icon: HomeIcon,
     path: '/app'
   },
   {
-    text: 'Riwayat Absensi',
-    icon: MedicationLiquidIcon,
-    path: '/app/presence-history'
+    text: 'Riwayat',
+    icon: RestoreIcon,
+    path: '/app/history'
   },
   {
     text: 'Profil',
-    icon: AccessibilityNewIcon,
+    icon: AccountIcon,
     path: '/app/profile'
   },
 ];

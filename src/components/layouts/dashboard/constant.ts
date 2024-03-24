@@ -9,7 +9,7 @@ export const menuList = [
     path: '/dashboard/employee'
   },
   {
-    text: 'Kantor',
+    text: 'Lokasi',
     icon: MedicationLiquidIcon,
     path: '/dashboard/office'
   },

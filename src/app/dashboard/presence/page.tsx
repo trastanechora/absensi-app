@@ -72,6 +72,7 @@ const EmployeePage = () => {
     } else if (type === 'edit') {
       router.push(`/dashboard/employee/${rowData.row.id}/edit`);
     } else {
+      // TODO: add delete mechanism
       console.warn('delete', rowData);
     }
   }

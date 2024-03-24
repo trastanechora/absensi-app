@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Divider, Container, TextField, FormControl, Button } from '@mui/material';
+import { Typography, Box, Divider, Container, TextField, FormControl, Button, InputAdornment } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useNotificationContext } from '@/context/notification';
@@ -16,25 +16,28 @@ const InsertPatientPage = () => {
 
   const [values, setValues] = useState({
     name: '',
-    email: ''
+    radius: 0,
+    lat: 0,
+    long: 0,
   });
 
-  const handleInputChange = (prop: string) => (event: any) => {
-    setValues({ ...values, [prop]: event.target.value });
+  const handleInputChange = (prop: string, type: string) => (event: any) => {
+    const newValue = type === 'number' ? Number(event.target.value) : event.target.value;
+    setValues({ ...values, [prop]: newValue });
   };
 
   const handleSubmit = () => {
     const body = values;
     setLoading(true)
-    fetch('/api/user', { method: 'POST', body: JSON.stringify(body) })
+    fetch('/api/office', { method: 'POST', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((responseObject) => {
         console.log('SUCCESS!', responseObject)
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan karyawan ${values.name}`, severity: 'success' } })
-        router.replace('/patient')
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan lokasi ${values.name}`, severity: 'success' } })
+        router.replace('/dashboard/office')
         setLoading(false)
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan karyawan, error: ${err}`, severity: 'error' } })
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan lokasi, error: ${err}`, severity: 'error' } })
         setLoading(false)
       })
   }
@@ -44,7 +47,7 @@ const InsertPatientPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Tambah Karyawan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Tambah Lokasi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -53,7 +56,7 @@ const InsertPatientPage = () => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Tambahkan Karyawan
+            Tambahkan Lokasi
           </Typography>
         </Box>
 
@@ -63,10 +66,10 @@ const InsertPatientPage = () => {
               <FormControl fullWidth>
                 <TextField
                   id="name-input"
-                  label="Nama Karyawan"
+                  label="Nama Lokasi"
                   name="name"
                   value={values.name}
-                  onChange={handleInputChange('name')}
+                  onChange={handleInputChange('name', 'string')}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -75,16 +78,55 @@ const InsertPatientPage = () => {
               </FormControl>
             </Box>
 					</Container>
-					
-					 <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
+
+          <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
             <Box sx={{ width: '100%' }}>
               <FormControl fullWidth>
                 <TextField
-                  id="email-input"
-                  label="Email"
-                  name="email"
-                  value={values.email}
-                  onChange={handleInputChange('email')}
+                  id="radius-input"
+                  label="Radius (dalam meter)"
+                  name="radius"
+                  type='number'
+                  value={values.radius}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">m</InputAdornment>
+                  }}
+                  onChange={handleInputChange('radius', 'number')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled={isLoading}
+                />
+              </FormControl>
+            </Box>
+          </Container>
+
+          <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
+            <Box sx={{ width: '50%', paddingRight: 2 }}>
+              <FormControl fullWidth>
+                <TextField
+                  id="latitude-input"
+                  label="Latitude"
+                  name="lat"
+                  type='number'
+                  value={values.lat}
+                  onChange={handleInputChange('lat', 'string')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled={isLoading}
+                />
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '50%', paddingLeft: 2 }}>
+              <FormControl fullWidth>
+                <TextField
+                  id="longitude-input"
+                  label="Longitude"
+                  name="long"
+                  type='number'
+                  value={values.long}
+                  onChange={handleInputChange('long', 'string')}
                   InputLabelProps={{
                     shrink: true,
                   }}

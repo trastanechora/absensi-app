@@ -1,22 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Divider, Container, TextField, FormControl, Button } from '@mui/material';
+import { Typography, Box, Divider, Container, TextField, FormControl, Button, InputLabel, Select, MenuItem } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useNotificationContext } from '@/context/notification';
 import styles from '@/styles/Dashboard.module.css';
 
 const InsertPatientPage = () => {
-  const [_, dispatch] = useNotificationContext()
+  const [_, dispatch] = useNotificationContext();
   const router = useRouter()
-  const [isLoading, setLoading] = useState<boolean>(false)
+  const [isLoading, setLoading] = useState<boolean>(true)
+  const [officeOptions, setOfficeOptions] = useState<any[]>([]);
 
   const [values, setValues] = useState({
     name: '',
-    email: ''
+    email: '',
+    officeId: ''
   });
 
   const handleInputChange = (prop: string) => (event: any) => {
@@ -30,14 +32,23 @@ const InsertPatientPage = () => {
       .then((res) => res.json())
       .then((responseObject) => {
         console.log('SUCCESS!', responseObject)
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan karyawan ${values.name}`, severity: 'success' } })
-        router.replace('/patient')
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan karyawan ${values.name}`, severity: 'success' } });
+        router.replace('/dashboard/employee')
         setLoading(false)
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan karyawan, error: ${err}`, severity: 'error' } })
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan karyawan, error: ${err}`, severity: 'error' } });
         setLoading(false)
       })
   }
+
+  useEffect(() => {
+    fetch(`/api/office/list`)
+      .then((res) => res.json())
+      .then((resObject) => {
+        setOfficeOptions(resObject)
+        setLoading(false)
+      })
+  }, []);
 
   if (isLoading) return <p>Loading...</p>
 
@@ -77,7 +88,10 @@ const InsertPatientPage = () => {
 					</Container>
 					
 					 <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{
+              width: '50%',
+              paddingRight: 1
+            }}>
               <FormControl fullWidth>
                 <TextField
                   id="email-input"
@@ -90,6 +104,24 @@ const InsertPatientPage = () => {
                   }}
                   disabled={isLoading}
                 />
+              </FormControl>
+            </Box>
+            <Box sx={{
+              width: '50%',
+              paddingLeft: 1
+            }}>
+              <FormControl fullWidth>
+                <InputLabel id="office-label">Kantor</InputLabel>
+                <Select
+                  labelId="office-label"
+                  id="office"
+                  label="Kantor"
+                  value={values.officeId}
+                  onChange={handleInputChange('officeId')}
+                  fullWidth
+                >
+                  {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
+                </Select>
               </FormControl>
             </Box>
           </Container>

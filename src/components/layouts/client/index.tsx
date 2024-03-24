@@ -1,18 +1,21 @@
 'use client';
 
 import * as React from 'react';
-import type { FC, PropsWithChildren } from 'react';
+import { useState, type FC, type PropsWithChildren } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Box from '@mui/material/Box';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ArchiveIcon from '@mui/icons-material/Archive';
+import HomeIcon from '@mui/icons-material/Home';
+import AccountIcon from '@mui/icons-material/AccountCircle';
 import Paper from '@mui/material/Paper';
 
 const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
-	const [value, setValue] = React.useState(0);
+	const currentPath = usePathname();
+  const [value, setValue] = useState(currentPath);
   const ref = React.useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   return (
     <Box sx={{ pb: 7 }} style={{ maxWidth: 430, margin: 'auto' }} ref={ref}>
@@ -23,11 +26,13 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
           value={value}
           onChange={(event, newValue) => {
             setValue(newValue);
+
+            router.push(newValue);
           }}
         >
-          <BottomNavigationAction label="Absensi" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Riwayat" icon={<FavoriteIcon />} />
-          <BottomNavigationAction label="Profil" icon={<ArchiveIcon />} />
+          <BottomNavigationAction value="/app" label="Absensi" icon={<HomeIcon />} />
+          <BottomNavigationAction value="/app/history" label="Riwayat" icon={<RestoreIcon />} />
+          <BottomNavigationAction value="/app/profile" label="Profil" icon={<AccountIcon />} />
         </BottomNavigation>
       </Paper>
     </Box>

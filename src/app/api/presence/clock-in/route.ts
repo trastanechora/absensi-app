@@ -1,31 +1,6 @@
 import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest ) {
-  const filterOffice = req.nextUrl.searchParams.get('f_office_id');
-  const filterUser = req.nextUrl.searchParams.get('f_user_id');
-  const filterDateStart = req.nextUrl.searchParams.get('f_date_start');
-  const filterDateEnd = req.nextUrl.searchParams.get('f_date_end');
-  const page = req.nextUrl.searchParams.get('page') || 1;
-  const limit = req.nextUrl.searchParams.get('limit') || 10;
-
-  const users = await prisma.user.findMany({
-    skip: (Number(page) - 1) * Number(limit),
-    take: Number(limit),
-    orderBy: {
-      createdAt: 'desc'
-    },
-    where: {
-      ...(filterOffice && { officeId: filterOffice}),
-      ...(filterUser && { userId: filterUser}),
-      ...(filterDateStart && { createdAt: { gte: new Date(filterDateStart), lte: new Date() }}),
-      ...(filterDateEnd && { createdAt: { gte: new Date(filterDateStart || ''), lte: new Date(filterDateEnd) }}),
-    }
-  });
-
-  return NextResponse.json(users);
-};
-
 export async function POST(req: NextRequest) {
   const { userId, officeId, clockInLat, clockInLong, clockInDate, clockInDistance } = await req.json();
 

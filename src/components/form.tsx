@@ -10,9 +10,13 @@ import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import { useNotificationContext } from '@/context/notification';
+import { useProfileContext } from '@/context/profile';
 
 export default function Form({ type }: { type: "login" | "register" }) {
+  const [_, dispatch] = useNotificationContext();
   const [loading, setLoading] = useState(false);
+  const [myProfile] = useProfileContext();
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,12 +31,15 @@ export default function Form({ type }: { type: "login" | "register" }) {
       }).then(({ error }) => {
         if (error) {
           setLoading(false);
-          // toast.error(error);
-          console.warn('[DEBUG]', error);
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal masuk, Error: ${error}`, severity: 'error' } });
         } else {
-          router.refresh();
-          router.push("/dashboard/employee");
+          // Redirect base on user role
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil masuk, meneruskan ke halaman muka..`, severity: 'success' } });
+          if (myProfile.role === 'admin') router.push("/dashboard/employee");
+
+          router.push('/app');
         }
+        setLoading(false);
       });
     } else {
       fetch("/api/user", {
@@ -49,15 +56,13 @@ export default function Form({ type }: { type: "login" | "register" }) {
       }).then(async (res) => {
         setLoading(false);
         if (res.status === 200) {
-          // toast.success("Account created! Redirecting to login...");
-          console.warn('[DEBUG]', 'Account created! Redirecting to login...');
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Akun berhasil dibuat, meneruskan ke halaman masuk..`, severity: 'success' } });
           setTimeout(() => {
             router.push("/login");
           }, 2000);
         } else {
           const { error } = await res.json();
-          // toast.error(error);
-          console.warn('[DEBUG]', error);
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal daftar, Error: ${error}`, severity: 'error' } });
         }
       });
     }
@@ -85,10 +90,6 @@ export default function Form({ type }: { type: "login" | "register" }) {
         id="password"
         autoComplete="current-password"
       />
-      <FormControlLabel
-        control={<Checkbox value="remember" color="primary" />}
-        label="Ingat saya"
-      />
       <Button
         type="submit"
         fullWidth
@@ -101,7 +102,7 @@ export default function Form({ type }: { type: "login" | "register" }) {
         <Grid item xs>
         </Grid>
         <Grid item>
-          <Link href="/register" variant="body2">
+          <Link href={type === "login" ? '/register' : '/login'} variant="body2">
             {type === "login" ? 'Belum punya akun? Daftar di sini' : 'Sudah punya akun? Masuk di sini'}
           </Link>
         </Grid>

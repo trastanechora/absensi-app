@@ -12,6 +12,9 @@ const roboto = Roboto({
 const theme = createTheme({
   typography: {
     fontFamily: roboto.style.fontFamily,
+    button: {
+      textTransform: 'none'
+    }
   },
 });
 

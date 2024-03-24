@@ -8,7 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, officeList, statusList, initialFilterState } from '@/entity/constant/employee';
+import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/office';
 
 const EmployeePage = () => {
   const [data, setData] = useState<any[]>([]);
@@ -23,7 +23,7 @@ const EmployeePage = () => {
   useEffect(() => {
     if (page === 0) return;
     setLoading(true)
-    fetch(`/api/user?page=${page}&limit=${rowPerPage}`)
+    fetch(`/api/office?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
         setData(resObject)
@@ -51,30 +51,28 @@ const EmployeePage = () => {
     setLoading(true)
     const filterArray = [];
     if (values.searchString && values.searchType) {
-      filterArray.push(`${values.searchType} contains '${values.searchString}'`);
-    }
-    if (values.office) {
-      filterArray.push(`${values.officeType} = '${values.office}'`);
+      filterArray.push(`${values.searchType}=${values.searchString}`);
     }
     if (values.status) {
-      filterArray.push(`${values.statusType} = '${values.status}'`);
+      filterArray.push(`${values.statusType}=${values.status}`);
     }
-    const joinedFilter = filterArray.join(' and ');
+    const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/user?filter=${joinedFilter}`)
+    fetch(`/api/office?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject.data);
+        setData(resObject);
         setLoading(false);
       })
   }
 
   const handleTriggerAction = (type: string, rowData: any) => {
     if (type === 'view') {
-      router.push(`/dashboard/employee/${rowData.row.id}`);
+      router.push(`/dashboard/office/${rowData.row.id}`);
     } else if (type === 'edit') {
-      router.push(`/dashboard/employee/${rowData.row.id}/edit`);
+      router.push(`/dashboard/office/${rowData.row.id}/edit`);
     } else {
+      // TODO: add delete mechanism
       console.warn('delete', rowData);
     }
   }
@@ -82,7 +80,7 @@ const EmployeePage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>List Kantor | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>List Lokasi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -91,11 +89,11 @@ const EmployeePage = () => {
         <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
           <Box sx={{ width: '70%', paddingRight: 1 }}>
             <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-              List Kantor
+              List Lokasi
             </Typography>
           </Box>
           <Box sx={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignSelf: 'center' }}>
-            <Button variant="contained" onClick={() => router.push('/dashboard/employee/add')} disabled={isLoading} sx={{ textTransform: 'none' }}>Tambahkan Karyawan</Button>
+            <Button variant="contained" onClick={() => router.push('/dashboard/office/add')} disabled={isLoading} sx={{ textTransform: 'none' }}>Tambahkan Lokasi</Button>
           </Box>
         </Container>
         <div className={styles.filterContainer}>
@@ -153,21 +151,6 @@ const EmployeePage = () => {
                       fullWidth
                     >
                       {statusList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
-                    </Select>
-                  </FormControl>
-                </Box>
-                <Box sx={{ width: '50%', paddingLeft: 1 }}>
-                  <FormControl fullWidth>
-                    <InputLabel id="office-label">Kantor</InputLabel>
-                    <Select
-                      labelId="office-label"
-                      id="office"
-                      label="Kantor"
-                      value={values.office}
-                      onChange={handleFilterChange('office')}
-                      fullWidth
-                    >
-                      {officeList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
                     </Select>
                   </FormControl>
                 </Box>

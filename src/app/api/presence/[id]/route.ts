@@ -44,7 +44,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       data: payload,
     })
 
-    return updatePresence;
+    return NextResponse.json(updatePresence);
   } else {
     return NextResponse.json({ error: "Your presence not recorded yet, please clock in first" }, { status: 400 });
   }

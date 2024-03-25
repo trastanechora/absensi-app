@@ -99,7 +99,7 @@ export async function PUT(req: NextRequest) {
       data: payload,
     })
 
-    return updateUser;
+    return NextResponse.json(updateUser);
   } else {
     return NextResponse.json({ error: "Account not found" }, { status: 400 });
   }

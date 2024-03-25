@@ -70,7 +70,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     // const transaction = await prisma.$transaction([deletePresences, deleteUser]);
     const transaction = await prisma.$transaction([deleteUser]);
-    return transaction;
+    return NextResponse.json(transaction);
   } else {
     return NextResponse.json({ error: "Account not found" }, { status: 400 });
   }

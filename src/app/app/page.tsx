@@ -1,18 +1,20 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { Container, Box, Chip, Button, Typography, Divider } from '@mui/material';
+import { Container, Box, Chip, Button, Typography, Divider, Skeleton } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import AlarmIcon from '@mui/icons-material/Alarm';
 
 import { useNotificationContext } from '@/context/notification';
-import CustomMap from '@/components/map';
 import Clock from '@/components/clock';
 import DialogPermission from '@/components/dialog-permission';
 import { useProfileContext } from '@/context/profile';
+
+const CustomMap = dynamic(() => import('@/components/map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={400} />})
 
 const AppHomePage = () => {
   const [isOpenDialogPermission, setIsOpenDialogPermission] = useState(false);
@@ -42,12 +44,12 @@ const AppHomePage = () => {
       .then((_) => {
         myProfile.refetch();
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil Clock In`, severity: 'success' } })
-        setIsLoading(false)
+        setIsLoading(false);
       }).catch((err) => {
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal Clock In, error: ${err}`, severity: 'error' } })
-        setIsLoading(false)
+        setIsLoading(false);
       })
-  }, [myProfile]);
+  }, [myProfile, dispatch]);
 
   const doClockOut = useCallback(() => {
     const body = {
@@ -64,12 +66,12 @@ const AppHomePage = () => {
       .then((_) => {
         myProfile.refetch();
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil Clock Out`, severity: 'success' } })
-        setIsLoading(false)
+        setIsLoading(false);
       }).catch((err) => {
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal Clock Out, error: ${err}`, severity: 'error' } })
-        setIsLoading(false)
+        setIsLoading(false);
       })
-  }, [myProfile])
+  }, [myProfile, dispatch])
   
   useEffect(() => {
     navigator.permissions.query({ name: 'geolocation' }).then(permissions => {
@@ -77,6 +79,8 @@ const AppHomePage = () => {
         setIsOpenDialogPermission(true);
       }
     });
+
+    setIsLoading(false);
   }, []);
 
   return (
@@ -92,24 +96,30 @@ const AppHomePage = () => {
 
         <Container disableGutters sx={{ width: '100%', px: '20px', my: '20px' }}>
           <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
-            <Typography variant="subtitle1" gutterBottom>
-              Selamat datang, {myProfile.name}!
-            </Typography>
+            {!isLoading ? (
+              <Typography variant="subtitle1" gutterBottom>
+                Selamat datang, {myProfile.name}!
+              </Typography>
+            ) : <Skeleton variant="rectangular" width="100%" height={28} />}
           </Container>
 
-          <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
-            <Clock />
+          <Container disableGutters sx={{ width: '100%', display: 'flex', marginTop: 1 }}>
+            {!isLoading ? (
+              <Typography variant="subtitle1" gutterBottom>
+                {new Date().toLocaleDateString('id-ID', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </Typography>
+            ) : <Skeleton variant="rectangular" width="100%" height={33.59} />}
           </Container>
 
-          <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
-            <Typography variant="subtitle1" gutterBottom>
-              {new Date().toLocaleDateString('id-ID', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </Typography>
+          <Container disableGutters sx={{ width: '100%', display: 'flex', marginTop: 1 }}>
+            {!isLoading ? (
+              <Clock />
+            ) : <Skeleton variant="rectangular" width="100%" height={72.81} />}
           </Container>
 
           <Divider sx={{ marginBottom: 3 }} />
@@ -126,7 +136,7 @@ const AppHomePage = () => {
               <Button startIcon={<LogoutIcon />} fullWidth>Clock Out</Button>
               <Chip
                 icon={<ScheduleIcon />}
-                label={myProfile.presences[0]?.clockOutDate !== null ? `${new Date(myProfile.presences[0]?.clockOutDate || '').getHours()}:${new Date(myProfile.presences[0]?.clockOutDate || '').getMinutes()}` : '-' } />
+                label={myProfile.presences.length > 0 && myProfile.presences[0]?.clockOutDate !== null ? `${new Date(myProfile.presences[0]?.clockOutDate || '').getHours()}:${new Date(myProfile.presences[0]?.clockOutDate || '').getMinutes()}` : '-' } />
             </Box>
           </Container>
 

@@ -37,7 +37,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       data: payload,
     })
 
-    return updatedOffice;
+    return NextResponse.json(updatedOffice);
   } else {
     return NextResponse.json({ error: "Office not found" }, { status: 400 });
   }
@@ -67,7 +67,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     // const transaction = await prisma.$transaction([deletePresences, deleteOffice]);
     const transaction = await prisma.$transaction([deleteOffice]);
-    return transaction;
+    return NextResponse.json(transaction);;
   } else {
     return NextResponse.json({ error: "Office not found" }, { status: 400 });
   }

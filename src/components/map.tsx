@@ -32,21 +32,22 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 				navigator.geolocation.getCurrentPosition((position: any) => {
 					setCoord([position.coords.latitude, position.coords.longitude]);
 					
-					// @ts-ignore
-					map.setView([position.coords.latitude, position.coords.longitude], 17);
 					const officeLatLong = Leaflet.latLng(officeCoordinates as LatLngExpression);
 					const distance = officeLatLong.distanceTo([position.coords.latitude, position.coords.longitude]);
 					
 					setCurrentPayload([position.coords.latitude, position.coords.longitude], distance)
 					console.warn('[DEBUG] try find distance', officeLatLong.distanceTo([position.coords.latitude, position.coords.longitude]));
+					
+					// @ts-ignore
+					map.setView([position.coords.latitude, position.coords.longitude], 17);
 				}, errorFunction);
 			} else {
 				console.log("Geolocation is not supported by this browser.");
 			}
 		}
-	}, [map]);
+	}, [map, officeCoordinates, setCurrentPayload]);
 	
-  return (
+	return (
 		<MapContainer
 			// @ts-ignore
 			ref={setMap}
@@ -54,7 +55,7 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 			preferCanvas={true}
 			center={coord}
 			zoom={17}
-			scrollWheelZoom={true}
+			// scrollWheelZoom={true}
 			style={{ height: "400px", maxWidth: "430px" }}
 		>
 		<TileLayer
@@ -66,12 +67,12 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 			pathOptions={greenOptions}
 			radius={radius}
 		/>
-		<Marker position={coord}>
-			<Popup>
-				Posisi anda saat ini, muat ulang halaman ini untuk memperbarui.
-			</Popup>
-		</Marker>
-	</MapContainer>
+			<Marker position={coord}>
+				<Popup>
+					Posisi anda saat ini, muat ulang halaman ini untuk memperbarui.
+				</Popup>
+			</Marker>
+		</MapContainer>
   );
 }
 

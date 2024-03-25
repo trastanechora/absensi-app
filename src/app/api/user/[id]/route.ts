@@ -42,7 +42,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json(updatedUser);
   } else {
-    return NextResponse.json({ error: "Account not found" }, { status: 400 });
+    return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });
   }
 };
 
@@ -72,6 +72,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     const transaction = await prisma.$transaction([deleteUser]);
     return NextResponse.json(transaction);
   } else {
-    return NextResponse.json({ error: "Account not found" }, { status: 400 });
+    return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });
   }
 };

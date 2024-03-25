@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     },
   });
   if (exists) {
-    return NextResponse.json({ error: "Office already exists" }, { status: 400 });
+    return NextResponse.json({ error: "Lokasi dengan nama ini sudah ada" }, { status: 400 });
   } else {
     const user = await prisma.office.create({
       data: {

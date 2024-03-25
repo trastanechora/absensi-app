@@ -13,10 +13,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
   const { userId, clockOutLat, clockOutLong, clockOutDate } = await req.json();
 
-  if (!userId) return NextResponse.json({ error: "Missing data in payload: userId" }, { status: 400 });
-  if (!clockOutLat) return NextResponse.json({ error: "Missing data in payload: clockOutLat" }, { status: 400 });
-  if (!clockOutLong) return NextResponse.json({ error: "Missing data in payload: clockOutLong" }, { status: 400 });
-	if (!clockOutDate) return NextResponse.json({ error: "Missing data in payload: clockOutDate" }, { status: 400 });
+  if (!userId) return NextResponse.json({ error: "Ada data yang kurang: userId" }, { status: 400 });
+  if (!clockOutLat) return NextResponse.json({ error: "Ada data yang kurang: clockOutLat" }, { status: 400 });
+  if (!clockOutLong) return NextResponse.json({ error: "Ada data yang kurang: clockOutLong" }, { status: 400 });
+	if (!clockOutDate) return NextResponse.json({ error: "Ada data yang kurang: clockOutDate" }, { status: 400 });
 	
 	const presence = await prisma.presence.findFirst({
     where: {

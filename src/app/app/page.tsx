@@ -14,14 +14,16 @@ import Clock from '@/components/clock';
 import DialogPermission from '@/components/dialog-permission';
 import { useProfileContext } from '@/context/profile';
 
-const CustomMap = dynamic(() => import('@/components/map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={400} />})
+import { convertDateToTime } from '@/app/lib/time';
+
+const CustomMap = dynamic(() => import('@/components/map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={400} /> })
 
 const AppHomePage = () => {
   const [isOpenDialogPermission, setIsOpenDialogPermission] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [_, dispatch] = useNotificationContext();
   const [myProfile] = useProfileContext();
-  const mapPayloadRef = useRef({ coords: [0, 0], distance: 0 })
+  const mapPayloadRef = useRef({ coords: [0, 0], distance: 0 });
 
   const getMapPayload = useCallback((coords: number[], distance: number) => {
     mapPayloadRef.current.coords = coords;
@@ -29,6 +31,14 @@ const AppHomePage = () => {
   }, [])
   
   const doClockIn = useCallback(() => {
+    
+    if (myProfile.isStrict) {
+      if (myProfile.office.radius < mapPayloadRef.current.distance) {
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Tidak dapat Clock In, pastikan Anda berada dalam radius lokasi`, severity: 'error' } });
+        return;
+      }
+    }
+    
     const body = {
       userId: myProfile.id,
       officeId: myProfile.officeId,
@@ -37,11 +47,11 @@ const AppHomePage = () => {
       clockInDistance: mapPayloadRef.current.distance,
       clockInDate: new Date(),
     };
-
+    
     setIsLoading(true)
     fetch('/api/presence/clock-in', { method: 'POST', body: JSON.stringify(body) })
-      .then((res) => res.json())
-      .then((_) => {
+    .then((res) => res.json())
+    .then((_) => {
         myProfile.refetch();
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil Clock In`, severity: 'success' } })
         setIsLoading(false);
@@ -52,6 +62,14 @@ const AppHomePage = () => {
   }, [myProfile, dispatch]);
 
   const doClockOut = useCallback(() => {
+    if (myProfile.isStrict) {
+      if (myProfile.office.radius < mapPayloadRef.current.distance) {
+        myProfile.refetch();
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Tidak dapat Clock Out, pastikan Anda berada dalam radius lokasi`, severity: 'error' } });
+        return;
+      }
+    }
+
     const body = {
       presenceId: myProfile.presences[0].id,
       clockOutLat: String(mapPayloadRef.current.coords[0]),
@@ -82,6 +100,12 @@ const AppHomePage = () => {
 
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (!myProfile.id) {
+      myProfile.refetch();
+    }
+  }, [myProfile]);
 
   return (
     <div>
@@ -129,14 +153,14 @@ const AppHomePage = () => {
               <Button startIcon={<LoginIcon />} fullWidth>Clock In</Button>
               <Chip
                 icon={<ScheduleIcon />}
-                label={myProfile.presences.length === 0 ? '-' : `${new Date(myProfile.presences[0]?.clockInDate || '').getHours()}:${new Date(myProfile.presences[0]?.clockInDate || '').getMinutes()}`}
+                label={myProfile.presences.length === 0 ? '-' : convertDateToTime(new Date(myProfile.presences[0].clockInDate))}
               />
             </Box>
             <Box sx={{ width: '50%', paddingLeft: 1, textAlign: 'center' }}>
               <Button startIcon={<LogoutIcon />} fullWidth>Clock Out</Button>
               <Chip
                 icon={<ScheduleIcon />}
-                label={myProfile.presences.length > 0 && myProfile.presences[0]?.clockOutDate !== null ? `${new Date(myProfile.presences[0]?.clockOutDate || '').getHours()}:${new Date(myProfile.presences[0]?.clockOutDate || '').getMinutes()}` : '-' } />
+                label={myProfile.presences.length > 0 && myProfile.presences[0]?.clockOutDate !== null ? convertDateToTime(new Date(myProfile.presences[0].clockOutDate)) : '-' } />
             </Box>
           </Container>
 
@@ -145,12 +169,12 @@ const AppHomePage = () => {
           <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
             <Box sx={{ width: '100%', paddingRight: 1, textAlign: 'center' }}>
               {(!myProfile.presences[0]?.clockInDate && !myProfile.presences[0]?.clockOutDate) && (
-                <Button variant="contained" endIcon={<AlarmIcon />} fullWidth onClick={doClockIn}>
+                <Button disabled={isLoading} variant="contained" endIcon={<AlarmIcon />} fullWidth onClick={doClockIn}>
                   Clock In
                 </Button>
               )}
               {(myProfile.presences[0]?.clockInDate && !myProfile.presences[0]?.clockOutDate) && (
-                <Button variant="contained" endIcon={<AlarmIcon />} fullWidth onClick={doClockOut}>
+                <Button disabled={isLoading} variant="contained" endIcon={<AlarmIcon />} fullWidth onClick={doClockOut}>
                   Clock Out
                 </Button>
               )}

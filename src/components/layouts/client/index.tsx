@@ -8,25 +8,54 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import RestoreIcon from '@mui/icons-material/Restore';
 import HomeIcon from '@mui/icons-material/Home';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccountIcon from '@mui/icons-material/AccountCircle';
 import Paper from '@mui/material/Paper';
+import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
+
+const getAppBarTitle = (path: string) => {
+  switch (path) {
+    case '/app/history':
+      return 'Riwayat Absensi';
+    case '/app/profile':
+      return 'Profil Saya'
+    default:
+      return 'Aplikasi Absensi'
+  }
+}
 
 const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
 	const currentPath = usePathname();
-  const [value, setValue] = useState(currentPath);
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   return (
     <Box sx={{ pb: 7 }} style={{ maxWidth: 430, margin: 'auto' }} ref={ref}>
+      {currentPath !== '/app' ? (
+        <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="back"
+            sx={{ mr: 2 }}
+            onClick={() => router.back()}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {getAppBarTitle(currentPath)}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      ) : null}
       {children}
       <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3} style={{ maxWidth:430, margin: 'auto' }}>
         <BottomNavigation
           showLabels
-          value={value}
+          value={currentPath}
           onChange={(event, newValue) => {
-            setValue(newValue);
-
             router.push(newValue);
           }}
         >

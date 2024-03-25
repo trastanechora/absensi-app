@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const { email, password } = credentials ?? { }
         if (!email || !password) {
-          throw new Error("Missing username or password");
+          throw new Error("Email atau password ada yang belum diisi");
         }
         const user = await prisma.user.findUnique({
           where: {
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
 				});
 
         if (!user || !(await compare(password, user.password))) {
-          throw new Error("Invalid username or password");
+          throw new Error("Email atau passowrd salah");
 				}
 
         return user;

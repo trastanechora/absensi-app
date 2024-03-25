@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     },
   });
   if (exists) {
-    return NextResponse.json({ error: "Account already exists" }, { status: 400 });
+    return NextResponse.json({ error: "Akun dengan email tersebut sudah ada" }, { status: 400 });
   } else {
     const payload: {
       name: string;
@@ -101,6 +101,6 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(updateUser);
   } else {
-    return NextResponse.json({ error: "Account not found" }, { status: 400 });
+    return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });
   }
 };

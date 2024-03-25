@@ -39,7 +39,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json(updatedOffice);
   } else {
-    return NextResponse.json({ error: "Office not found" }, { status: 400 });
+    return NextResponse.json({ error: "Lokasi tidak dapat ditemukan" }, { status: 400 });
   }
 };
 
@@ -69,6 +69,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     const transaction = await prisma.$transaction([deleteOffice]);
     return NextResponse.json(transaction);;
   } else {
-    return NextResponse.json({ error: "Office not found" }, { status: 400 });
+    return NextResponse.json({ error: "Lokasi tidak dapat ditemukan" }, { status: 400 });
   }
 };

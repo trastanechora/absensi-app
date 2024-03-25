@@ -29,12 +29,12 @@ export async function GET(req: NextRequest ) {
 export async function POST(req: NextRequest) {
   const { userId, officeId, clockInLat, clockInLong, clockInDate, clockInDistance } = await req.json();
 
-  if (!userId) return NextResponse.json({ error: "Missing data in payload: userId" }, { status: 400 });
-  if (!officeId) return NextResponse.json({ error: "Missing data in payload: officeId" }, { status: 400 });
-  if (!clockInLat) return NextResponse.json({ error: "Missing data in payload: clockInLat" }, { status: 400 });
-  if (!clockInLong) return NextResponse.json({ error: "Missing data in payload: clockInLong" }, { status: 400 });
-  if (!clockInDate) return NextResponse.json({ error: "Missing data in payload: clockInDate" }, { status: 400 });
-  if (!clockInDistance) return NextResponse.json({ error: "Missing data in payload: clockInDistance" }, { status: 400 });
+  if (!userId) return NextResponse.json({ error: "Ada data yang kurang: userId" }, { status: 400 });
+  if (!officeId) return NextResponse.json({ error: "Ada data yang kurang: officeId" }, { status: 400 });
+  if (!clockInLat) return NextResponse.json({ error: "Ada data yang kurang: clockInLat" }, { status: 400 });
+  if (!clockInLong) return NextResponse.json({ error: "Ada data yang kurang: clockInLong" }, { status: 400 });
+  if (!clockInDate) return NextResponse.json({ error: "Ada data yang kurang: clockInDate" }, { status: 400 });
+  if (!clockInDistance) return NextResponse.json({ error: "Ada data yang kurang: clockInDistance" }, { status: 400 });
 
   const payload: {
     userId: string;

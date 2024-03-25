@@ -49,6 +49,7 @@ model Presence {
   clockOutLat      String?
   clockOutLong     String?
   officeId         String
+  duration         String?
   office           Office    @relation(fields: [officeId], references: [id])
   user             User      @relation(fields: [userId], references: [id])
 }

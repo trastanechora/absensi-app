@@ -34,6 +34,7 @@ const ContextState = createContext<ProfileState | undefined>(undefined);
 const ContextDispatch = createContext<Dispatch<ProfileAction> | undefined>(undefined);
 
 export const ProfileProvider: FC<Props> = (props) => {
+  console.warn('[DEBUG] rendering ProfileProvider');
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
 

@@ -1,11 +1,17 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import { decode } from 'next-auth/jwt';
+
+const appRegex = new RegExp('/app*');
+const dashboardRegex = new RegExp('/dashboard*');
+const loginRegex = new RegExp('/login*');
+const registerRegex = new RegExp('/register*');
+const nextRegex = new RegExp('/_next*');
+const authRegex = new RegExp('/auth*');
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  if (path === "/") {
+  if (nextRegex.test(path) || authRegex.test(path)) {
     return NextResponse.next();
   }
 
@@ -14,12 +20,21 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!session && path.includes('/dashboard') && path.includes('/app')) {
+  if (!session && appRegex.test(path)) {
     return NextResponse.redirect(new URL("/login", req.url));
-  } else if (session && (path.includes('/login') || path.includes('/register'))) {
-    // Redirect based on user role
-    if (session.role === 'admin') return NextResponse.redirect(new URL("/dashboard/employee", req.url));
-    return NextResponse.redirect(new URL("/app", req.url));
+  }
+
+  if (dashboardRegex.test(path)) {
+    if (!session) return NextResponse.redirect(new URL("/login", req.url));
+    if (session && session.role !== 'admin') return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  if (loginRegex.test(path) || registerRegex.test(path)) {
+    if (session && session.role !== 'admin') {
+      NextResponse.redirect(new URL("/app", req.url));
+    } else {
+      NextResponse.redirect(new URL("/dashboard/employee", req.url));
+    }
   }
 
   return NextResponse.next();

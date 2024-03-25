@@ -5,17 +5,6 @@ import PlaceIcon from '@mui/icons-material/Place';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-export const officeList = [
-  {
-    text: 'Malang',
-    value: '1234-5678',
-  },
-  {
-    text: 'Bogor',
-    value: '8765-4321'
-  }
-]
-
 export const statusList = [
   {
     text: 'Aktif',

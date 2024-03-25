@@ -8,7 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, officeList, statusList, initialFilterState } from '@/entity/constant/employee';
+import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/employee';
 
 const EmployeePage = () => {
   const [data, setData] = useState<any[]>([]);

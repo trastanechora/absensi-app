@@ -74,10 +74,8 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const Dashboard: FC<PropsWithChildren<{ displayName: string }>> = ({ children, displayName }) => {
 	const router = useRouter();
 	const currentPath = usePathname();
-//   const { user } = useAuthState()
 
-  // Drawer controller
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const handleDrawerOpen = () => {
     setOpen(true);
   };

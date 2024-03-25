@@ -1,33 +1,61 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import Head from 'next/head'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PrintIcon from '@mui/icons-material/Print';
 import { DataGrid } from '@mui/x-data-grid';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, officeList, statusList, initialFilterState } from '@/entity/constant/employee';
+import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/presence';
+
+import { convertDateToLocaleString } from '@/app/lib/date';
+import { convertDateToTime } from '@/app/lib/time';
 
 const EmployeePage = () => {
   const [data, setData] = useState<any[]>([]);
+  const [officeOptions, setOfficeOptions] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
 
+  const downloadCSV = useCallback(() => {
+    const csvContent = "data:text/csv;charset=utf-8," +
+      "Nama,Lokasi,Tanggal,Clock In,Clock Out\n" +
+      data.map(row =>
+        `"${row.user.name}","${row.office.name}","${convertDateToLocaleString(new Date(row.createdAt))}","${`${convertDateToTime(new Date(row.clockInDate))} | ${row.clockInDistance}m`}","${`${convertDateToTime(new Date(row.clockOutDate))} | ${row.clockOutDistance ? `${row.clockOutDistance}m` : '-'}`}"`
+      ).join("\n");
+
+    console.warn('[DEBUG] csvContent', csvContent);
+    const encodedUri = encodeURI(csvContent);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "list_absensi.csv");
+    document.body.appendChild(link);
+    link.click();
+  }, [data]);
+
   const router = useRouter()
 
   useEffect(() => {
     if (page === 0) return;
     setLoading(true)
-    fetch(`/api/user?page=${page}&limit=${rowPerPage}`)
+    fetch(`/api/presence?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
         setData(resObject)
         setLoading(false)
+      })
+    
+    fetch(`/api/office/list`)
+      .then((res) => res.json())
+      .then((resObject) => {
+        setOfficeOptions(resObject)
       })
   }, [page, rowPerPage])
 
@@ -51,26 +79,21 @@ const EmployeePage = () => {
     setLoading(true)
     const filterArray = [];
     if (values.searchString && values.searchType) {
-      filterArray.push(`${values.searchType} contains '${values.searchString}'`);
+      filterArray.push(`${values.searchType}=${values.searchString}`);
     }
-    if (values.status) {
-      filterArray.push(`${values.statusType} = '${values.status}'`);
-    }
-    const joinedFilter = filterArray.join(' and ');
+    const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/user?filter=${joinedFilter}`)
+    fetch(`/api/presence?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject.data);
+        setData(resObject);
         setLoading(false);
       })
   }
 
   const handleTriggerAction = (type: string, rowData: any) => {
     if (type === 'view') {
-      router.push(`/dashboard/employee/${rowData.row.id}`);
-    } else if (type === 'edit') {
-      router.push(`/dashboard/employee/${rowData.row.id}/edit`);
+      router.push(`/dashboard/presence/${rowData.row.id}`);
     } else {
       // TODO: add delete mechanism
       console.warn('delete', rowData);
@@ -93,7 +116,7 @@ const EmployeePage = () => {
             </Typography>
           </Box>
           <Box sx={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignSelf: 'center' }}>
-            <Button variant="contained" onClick={() => router.push('/dashboard/employee/add')} disabled={isLoading} sx={{ textTransform: 'none' }}>Tambahkan Karyawan</Button>
+            <Button variant="contained" onClick={() => downloadCSV()} disabled={isLoading} sx={{ textTransform: 'none' }} endIcon={<PrintIcon />}>Cetak</Button>
           </Box>
         </Container>
         <div className={styles.filterContainer}>
@@ -165,7 +188,7 @@ const EmployeePage = () => {
                       onChange={handleFilterChange('office')}
                       fullWidth
                     >
-                      {officeList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
+                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
                     </Select>
                   </FormControl>
                 </Box>

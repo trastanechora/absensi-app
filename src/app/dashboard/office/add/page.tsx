@@ -8,10 +8,11 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useNotificationContext } from '@/context/notification';
 import styles from '@/styles/Dashboard.module.css';
+// import InputMap from '@/components/input-map';
 
 const InsertPatientPage = () => {
-  const [_, dispatch] = useNotificationContext()
-  const router = useRouter()
+  const [_, dispatch] = useNotificationContext();
+  const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(false)
 
   const [values, setValues] = useState({
@@ -135,6 +136,10 @@ const InsertPatientPage = () => {
               </FormControl>
             </Box>
           </Container>
+
+          {/* <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
+            <InputMap setCurrentPayload={() => {}} />
+          </Container> */}
         
           <Divider sx={{ marginBottom: 3 }} />
 

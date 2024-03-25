@@ -37,7 +37,7 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
     renderCell: (params: any) =>
       <ButtonGroup variant="outlined" aria-label="text button group">
         <Button onClick={() => callbackFunction('view', params)} sx={{ textTransform: 'none' }} startIcon={<VisibilityIcon />}>Detail</Button>
-        <Button onClick={() => callbackFunction('edit', params)} sx={{ textTransform: 'none' }} startIcon={<EditIcon />}>Ubah</Button>
+        <Button disabled onClick={() => callbackFunction('edit', params)} sx={{ textTransform: 'none' }} startIcon={<EditIcon />}>Ubah</Button>
         <Button disabled onClick={() => callbackFunction('delete', params)} sx={{ textTransform: 'none' }} startIcon={<DeleteForeverIcon />}>Hapus</Button>
       </ButtonGroup>
   }

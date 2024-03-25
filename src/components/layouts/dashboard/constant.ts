@@ -1,21 +1,21 @@
 import ContactEmergencyIcon from '@mui/icons-material/ContactEmergency';
-import MedicationLiquidIcon from '@mui/icons-material/MedicationLiquid';
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import PlaceIcon from '@mui/icons-material/Place';
+import AccountIcon from '@mui/icons-material/AccountCircle';
 
 export const menuList = [
   {
     text: 'Karyawan',
-    icon: ContactEmergencyIcon,
+    icon: AccountIcon,
     path: '/dashboard/employee'
   },
   {
     text: 'Lokasi',
-    icon: MedicationLiquidIcon,
+    icon: PlaceIcon,
     path: '/dashboard/office'
   },
   {
     text: 'Absensi',
-    icon: AccessibilityNewIcon,
+    icon: ContactEmergencyIcon,
     path: '/dashboard/presence'
   },
 ];

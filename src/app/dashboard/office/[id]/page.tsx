@@ -33,7 +33,7 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Detail Karyawan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Detail Lokasi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -42,20 +42,20 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Detail Karyawan
+            Detail Lokasi
           </Typography>
         </Box>
 
         <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Nama Karyawan:
+            Nama Lokasi:
           </Typography>
           <Typography variant="body1" gutterBottom>
             {detail.name}
           </Typography>
         </Box>
 
-        <Box sx={{ width: '100%', marginBottom: 2 }}>
+        {/* <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
             Informasi:
           </Typography>
@@ -126,7 +126,7 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
               {detail.date_of_birth}
             </Typography>
           </Box>
-        </Box>
+        </Box> */}
         <Divider sx={{ marginBottom: 3 }} />
       </main>
     </div>

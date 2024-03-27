@@ -30,11 +30,8 @@ export default function Form({ type }: { type: "login" | "register" }) {
           setLoading(false);
           dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal masuk, Error: ${error}`, severity: 'error' } });
         } else {
-          // Redirect base on user role
           dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil masuk, meneruskan ke halaman muka..`, severity: 'success' } });
-          if (myProfile.role === 'admin') router.push("/dashboard/employee");
-
-          router.push('/app');
+          router.push('/dashboard/employee');
         }
         setLoading(false);
       });

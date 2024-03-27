@@ -83,7 +83,7 @@ const AppProfilePage = () => {
                   Lokasi Clock in/out:
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  {myProfile.office.name}
+                  {myProfile.office?.name}
                 </Typography>
               </Box>
               <Box sx={{ width: '100%', marginBottom: 2 }}>

@@ -27,7 +27,7 @@ export default async function middleware(req: NextRequest) {
 
   if (dashboardRegex.test(path)) {
     if (!session) return NextResponse.redirect(new URL("/login", req.url));
-    if (session && session.role !== 'admin') return NextResponse.redirect(new URL("/login", req.url));
+    if (session && session.role !== 'admin') return NextResponse.redirect(new URL("/app", req.url));
   }
 
   if (loginRegex.test(path) || registerRegex.test(path)) {

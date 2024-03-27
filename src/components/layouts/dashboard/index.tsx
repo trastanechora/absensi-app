@@ -172,16 +172,16 @@ const Dashboard: FC<PropsWithChildren<{ displayName: string }>> = ({ children, d
 					<ListItem disablePadding sx={{ display: 'block', textAlign: 'center', height: 76 }}>
 						{open ?
 							<Image
-								src="/logo.png"
+								src="/logos/company.png"
 								priority
-								alt="Logo"
+								alt="Logo Perusahaan"
 								className="h-10 w-10 rounded-full"
 								width={128}
 								height={72}
 							/> : <Image
-								src="/logo-vertical.png"
+								src="/logos/company-vertical.png"
 								priority
-								alt="Logo"
+								alt="Logo Perusahaan Vertikal"
 								className="h-10 w-10 rounded-full"
 								width={36}
 								height={64}

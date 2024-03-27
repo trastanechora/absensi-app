@@ -16,7 +16,7 @@ import { useProfileContext } from '@/context/profile';
 
 import { convertDateToTime } from '@/app/lib/time';
 
-const CustomMap = dynamic(() => import('@/components/map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={400} /> })
+const CustomMap = dynamic(() => import('@/components/map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={300} /> })
 
 const AppHomePage = () => {
   const [isOpenDialogPermission, setIsOpenDialogPermission] = useState(false);

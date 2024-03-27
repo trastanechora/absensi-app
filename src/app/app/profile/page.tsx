@@ -78,7 +78,8 @@ const AppProfilePage = () => {
                   {myProfile.name}
                 </Typography>
               </Box>
-              <Box sx={{ width: '100%', marginBottom: 2 }}>
+              {myProfile.office?.name && (
+                <Box sx={{ width: '100%', marginBottom: 2 }}>
                 <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
                   Lokasi Clock in/out:
                 </Typography>
@@ -86,6 +87,7 @@ const AppProfilePage = () => {
                   {myProfile.office?.name}
                 </Typography>
               </Box>
+              )}
               <Box sx={{ width: '100%', marginBottom: 2 }}>
                 <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
                   Diperbolehkan Clock in/out di luar area:
@@ -149,7 +151,7 @@ const AppProfilePage = () => {
           <Divider sx={{ my: 6 }} />
           <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
             <Box sx={{ width: '100%', paddingRight: 1, textAlign: 'center' }}>
-              <Button variant="contained" endIcon={<LogoutIcon />} fullWidth onClick={handleLogout}>
+              <Button variant="outlined" color="error" endIcon={<LogoutIcon />} fullWidth onClick={handleLogout}>
                 Keluar
               </Button>
             </Box>

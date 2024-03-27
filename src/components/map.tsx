@@ -48,7 +48,7 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 				dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Akses lokasi tidak didukung pada perangkat Anda, mohon hubungi admin`, severity: 'error' } });
 			}
 		}
-	}, [map, officeCoordinates, setCurrentPayload]);
+	}, [map, officeCoordinates, setCurrentPayload, errorFunction, dispatch]);
 	
 	return (
 		<MapContainer
@@ -58,7 +58,7 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 			preferCanvas={true}
 			center={coord}
 			zoom={17}
-			style={{ height: "400px", maxWidth: "430px" }}
+			style={{ height: "300px", maxWidth: "430px" }}
 		>
 		<TileLayer
 			attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

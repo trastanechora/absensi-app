@@ -28,7 +28,7 @@ const InputMap = ({ setCurrentPayload }: Props) => {
 			preferCanvas={true}
 			center={coord}
 			zoom={17}
-			style={{ height: "400px", maxWidth: "430px" }}
+			style={{ height: "300px", maxWidth: "430px" }}
 		>
 		<TileLayer
 			attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

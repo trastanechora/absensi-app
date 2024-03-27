@@ -46,8 +46,8 @@ export default function Form({ type }: { type: "login" | "register" }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: 'test',
-          role: 'test',
+          name: e.currentTarget.email.value,
+          role: 'staff',
           email: e.currentTarget.email.value,
           password: e.currentTarget.password.value,
         }),
@@ -76,6 +76,7 @@ export default function Form({ type }: { type: "login" | "register" }) {
         label="Alamat Email"
         name="email"
         autoComplete="email"
+        disabled={loading}
         autoFocus
       />
       <TextField
@@ -87,12 +88,14 @@ export default function Form({ type }: { type: "login" | "register" }) {
         type="password"
         id="password"
         autoComplete="current-password"
+        disabled={loading}
       />
       <Button
         type="submit"
         fullWidth
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
+        disabled={loading}
       >
         {type === "login" ? 'Masuk' : 'Daftar'}
       </Button>

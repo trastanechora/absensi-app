@@ -5,7 +5,7 @@ import { hash } from "bcrypt";
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   
-  const user = await prisma.user.findFirst({ where: { id } });
+  const user = await prisma.user.findFirst({ where: { id }, include: { office: true } });
 	return NextResponse.json(user);
 };
 

@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { Container, Box, List, Divider, ListItem, Stepper, Typography, Step, StepLabel, Card, CardContent, Alert } from '@mui/material';
 import { convertDateToTime } from '@/app/lib/time';
 import { convertDateToLocaleString } from '@/app/lib/date';
+import PendingIcon from '@mui/icons-material/Pending';
 
 interface Presence {
   clockInDate: string;
@@ -44,8 +45,6 @@ const AppHistoryPage = () => {
 
       <main>
         <Container disableGutters sx={{ width: '100%', px: '20px', my: '20px' }}>
-          <Divider sx={{ my: 6 }} />
-
           <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
             <Box sx={{ width: '100%', paddingRight: 1, textAlign: 'center' }}>
               {listRef.current.length === 0 && !isLoading && (<Alert severity="info">Anda belum memiliki riwayat absensi</Alert>)}
@@ -67,9 +66,15 @@ const AppHistoryPage = () => {
                                 <Step>
                                   <StepLabel optional={<Typography variant="caption">{clockInTime} | {clockInDistance}</Typography>}>Clock In</StepLabel>
                                 </Step>
-                                <Step>
-                                  <StepLabel error={!presence.clockOutDate} optional={<Typography variant="caption">{clockOutTime} | {clockOutDistance}</Typography>}>Clock Out</StepLabel>
-                                </Step>
+                                {index === 0 ? (
+                                  <Step>
+                                    <StepLabel icon={<PendingIcon />} optional={<Typography variant="caption">{clockOutTime} | {clockOutDistance}</Typography>}>Clock Out</StepLabel>
+                                  </Step>
+                                ) : (
+                                  <Step>
+                                    <StepLabel error={!presence.clockOutDate} optional={<Typography variant="caption">{clockOutTime} | {clockOutDistance}</Typography>}>Clock Out</StepLabel>
+                                  </Step>
+                                )}
                               </Stepper>
                             </Box>
                             <Box sx={{ width: '50%', paddingRight: 1, textAlign: 'center', margin: 'auto' }}>

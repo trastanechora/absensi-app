@@ -7,19 +7,37 @@ import { Typography, Box, Divider } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
 
+import { useNotificationContext } from '@/context/notification';
 import styles from '@/styles/Dashboard.module.css'
 
 const EmployeeDetailPage = ({ params }: { params: { id: string } }) => {
+  const [_, dispatch] = useNotificationContext();
   const [isLoading, setLoading] = useState<boolean>(false)
   const [detail, setDetail] = useState<any>({})
   const { id } = params;
 
   const router = useRouter();
 
+  const handleResetPassword = () => {
+    fetch(`/api/user/${id}/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(async (res) => {
+        if (res.status === 200) {
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Reset password berhasil, password untuk karyawan kembali ke setelan semula`, severity: 'success' } });
+        } else {
+          const { error } = await res.json();
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal reset password, Error: ${error}`, severity: 'error' } });
+        }
+      });
+  }
+
   useEffect(() => {
     if (id) {
       setLoading(true);
-      fetch(`/api/user?id=${id}`)
+      fetch(`/api/user/${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
           setLoading(false);
@@ -57,77 +75,38 @@ const EmployeeDetailPage = ({ params }: { params: { id: string } }) => {
 
         <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Informasi:
+            Email:
           </Typography>
-          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.info}
+          <Typography variant="body1" gutterBottom>
+            {detail.email}
           </Typography>
         </Box>
 
         <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Alamat:
+            Lokasi:
           </Typography>
           <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.address}
+            {detail.office?.name}
+          </Typography>
+        </Box>
+
+        <Box sx={{ width: '100%', marginBottom: 2 }}>
+          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+            Clock in/out di luar radius:
+          </Typography>
+          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
+            {detail.isStrict ? 'Tidak' : 'Ya'}
           </Typography>
         </Box>
         <Divider sx={{ marginBottom: 3 }} />
-
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              NIP:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.id_number}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Status:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.status}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Buka Praktik Sejak:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.service_start_date}
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Nomor HP:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.phone}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Email:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.email}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Tanggal Lahir:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.date_of_birth}
-            </Typography>
-          </Box>
-        </Box>
-        <Divider sx={{ marginBottom: 3 }} />
+        <Button
+          onClick={handleResetPassword}
+          variant="outlined"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Reset Password
+        </Button>
       </main>
     </div>
   )

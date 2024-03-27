@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import { useNotificationContext } from '@/context/notification';
 import { useProfileContext } from '@/context/profile';
 
@@ -40,14 +39,14 @@ export default function Form({ type }: { type: "login" | "register" }) {
         setLoading(false);
       });
     } else {
-      fetch("/api/user", {
+      fetch("/api/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: e.currentTarget.email.value,
-          role: 'staff',
+          role: 'admin',
           email: e.currentTarget.email.value,
           password: e.currentTarget.password.value,
         }),
@@ -102,11 +101,11 @@ export default function Form({ type }: { type: "login" | "register" }) {
       <Grid container>
         <Grid item xs>
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <Link href={type === "login" ? '/register' : '/login'} variant="body2">
             {type === "login" ? 'Belum punya akun? Daftar di sini' : 'Sudah punya akun? Masuk di sini'}
           </Link>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );

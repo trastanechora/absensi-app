@@ -5,13 +5,14 @@ const appRegex = new RegExp('/app*');
 const dashboardRegex = new RegExp('/dashboard*');
 const loginRegex = new RegExp('/login*');
 const registerRegex = new RegExp('/register*');
+const registerApiRegex = new RegExp('/api/user/register*')
 const nextRegex = new RegExp('/_next*');
 const authRegex = new RegExp('/auth*');
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  if (nextRegex.test(path) || authRegex.test(path)) {
+  if (nextRegex.test(path) || authRegex.test(path) || registerApiRegex.test(path)) {
     return NextResponse.next();
   }
 

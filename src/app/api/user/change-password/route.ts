@@ -4,7 +4,7 @@ import { hash, compare } from "bcrypt";
 import { decode } from 'next-auth/jwt';
 
 export async function PUT(req: NextRequest) {
-    const sessionToken = req.cookies.get('next-auth.session-token');
+    const sessionToken = req.cookies.get(process.env.NEXTAUTH_SESSION_TOKEN_NAME || '');
     const currentAccount = await decode({
       token: sessionToken?.value as unknown as string,
       secret: process.env.NEXTAUTH_SECRET || '',

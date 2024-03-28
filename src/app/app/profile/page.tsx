@@ -61,7 +61,7 @@ const AppProfilePage = () => {
 
       <main>
         <Container disableGutters sx={{ width: '100%', px: '20px', my: '20px' }}>
-          <Accordion defaultExpanded>
+          <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"

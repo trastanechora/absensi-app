@@ -66,7 +66,7 @@ const AppHistoryPage = () => {
                                 <Step>
                                   <StepLabel optional={<Typography variant="caption">{clockInTime} | {clockInDistance}</Typography>}>Clock In</StepLabel>
                                 </Step>
-                                {index === 0 ? (
+                                {(index === 0 && clockOutTime === '-') ? (
                                   <Step>
                                     <StepLabel icon={<PendingIcon />} optional={<Typography variant="caption">{clockOutTime} | {clockOutDistance}</Typography>}>Clock Out</StepLabel>
                                   </Step>

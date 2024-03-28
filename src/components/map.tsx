@@ -4,13 +4,12 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, Circle } from "react-leaflet";
 import Leaflet from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 import { useNotificationContext } from '@/context/notification';
 
-// const officeCoordinates: LatLngExpression = [-6.342705163707955, 106.57729809989186];
 const greenOptions = { color: 'green', fillColor: 'green' };
 
 interface Props {
@@ -22,11 +21,11 @@ interface Props {
 const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
   const [_, dispatch] = useNotificationContext();
 	const [map, setMap] = useState(false);
-  const [coord, setCoord] = useState<LatLngExpression>([-6.175195012186339, 106.8272447777918]);
+  const [coord, setCoord] = useState<LatLngExpression>([-6.175195012186339, 106.8272447777918]); // Monas
 
-	function errorFunction() {
+	const errorFunction = useCallback(() => {
 		dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal memuat lokasi, pastikan Anda terhubung ke internet kemudian muat ulang halaman`, severity: 'error' } });
-	}
+	}, [])
 
   useEffect(() => {
 		if (map) {
@@ -44,7 +43,6 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 					map.setView([position.coords.latitude, position.coords.longitude], 17);
 				}, errorFunction);
 			} else {
-				// console.log("Geolocation is not supported by this browser.");
 				dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Akses lokasi tidak didukung pada perangkat Anda, mohon hubungi admin`, severity: 'error' } });
 			}
 		}
@@ -54,7 +52,6 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 		<MapContainer
 			// @ts-ignore
 			ref={setMap}
-			
 			preferCanvas={true}
 			center={coord}
 			zoom={17}

@@ -18,7 +18,8 @@ const InsertPatientPage = () => {
   const [values, setValues] = useState({
     name: '',
     email: '',
-    officeId: ''
+    officeId: '',
+    isStrict: true,
   });
 
   const handleInputChange = (prop: string) => (event: any) => {
@@ -70,7 +71,7 @@ const InsertPatientPage = () => {
 
         <Container maxWidth={false} disableGutters sx={{ width: '100%', marginTop: 2 }}>
           <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '50%', paddingRight: 1 }}>
               <FormControl fullWidth>
                 <TextField
                   id="name-input"
@@ -83,6 +84,22 @@ const InsertPatientPage = () => {
                   }}
                   disabled={isLoading}
                 />
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '50%', paddingLeft: 1 }}>
+              <FormControl fullWidth>
+                <InputLabel id="office-label">Dilarang Clock in / out di luar area</InputLabel>
+                <Select
+                  labelId="isStrict-label"
+                  id="isStrict"
+                  label="Dilarang Clock in / out di luar area"
+                  value={values.isStrict}
+                  onChange={handleInputChange('isStrict')}
+                  fullWidth
+                >
+                  {/* @ts-ignore */}
+                  {[{ id: true, name: 'Ya' }, { id: false, name: 'Tidak' }].map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
+                </Select>
               </FormControl>
             </Box>
 					</Container>

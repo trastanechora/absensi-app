@@ -40,8 +40,21 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
     }
   },
   { field: "email", headerName: "Alamat Email", width: 250, sortable: false },
-  { field: "status", headerName: "Status Akun", width: 200, sortable: false },
-  { field: "address", headerName: "Alamat", width: 200, sortable: false },
+  {
+    field: "isStrict", headerName: "Clock In/Out Dari Luar Area", width: 200, sortable: false,
+    renderCell: (params: any) => {
+      if (params.value) return "Tidak Diperbolehkan"
+      return "Diperbolehkan"
+    }
+  },
+  {
+    field: "status", headerName: "Status Akun", width: 200, sortable: false,
+    renderCell: (params: any) => {
+      if (params.value === 'active') return "Aktif"
+      return "Ditangguhkan"
+    }
+  },
+  // { field: "address", headerName: "Alamat", width: 200, sortable: false },
   {
     field: 'action',
     headerName: 'Tindakan',

@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 };
 
 export async function POST(req: NextRequest) {
-  const { name, role = 'staff', email, password = 'pas123!', officeId } = await req.json();
+  const { name, role = 'staff', email, password = 'pas123!', officeId, isStrict } = await req.json();
   const exists = await prisma.user.findUnique({
     where: {
       email,
@@ -56,11 +56,13 @@ export async function POST(req: NextRequest) {
       email: string;
       password: string;
       officeId?: string;
+      isStrict?: boolean;
     } = {
       name,
       role,
       email,
-      password: await hash(password, 10)
+      password: await hash(password, 10),
+      isStrict
     }
 
     if (officeId) payload.officeId = officeId;
@@ -69,38 +71,5 @@ export async function POST(req: NextRequest) {
       data: payload,
     });
     return NextResponse.json(user);
-  }
-};
-
-export async function PUT(req: NextRequest) {
-  const { name, role, email, password } = await req.json();
-  const payload: {
-    name?: string;
-    role?: string;
-    email?: string;
-    password?: string;
-  } = {};
-
-  if (name) payload.name = name;
-  if (role) payload.role = role;
-  if (email) payload.email = email;
-  if (password) payload.password = await hash(password, 10);
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-  if (user) {
-    const updateUser = await prisma.user.update({
-      where: {
-        email,
-      },
-      data: payload,
-    })
-
-    return NextResponse.json(updateUser);
-  } else {
-    return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });
   }
 };

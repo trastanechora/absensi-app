@@ -18,14 +18,17 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     },
   });
   if (user) {
-    const { name, role, email, password, officeId } = await req.json();
+    const { name, role, email, password, officeId, isStrict } = await req.json();
     const payload: {
       name?: string;
       role?: string;
       email?: string;
       password?: string;
       officeId?: string;
-    } = {};
+      isStrict?: boolean;
+    } = {
+      isStrict
+    };
 
     if (name) payload.name = name;
     if (role) payload.role = role;
@@ -56,11 +59,11 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   });
 
   if (user) {
-    // const deletePresences = prisma.presence.deleteMany({
-    //   where: {
-    //     userId: user.id,
-    //   },
-    // })
+    const deletePresences = prisma.presence.deleteMany({
+      where: {
+        userId: user.id,
+      },
+    })
 
     const deleteUser = prisma.user.delete({
       where: {
@@ -68,8 +71,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       },
     })
 
-    // const transaction = await prisma.$transaction([deletePresences, deleteUser]);
-    const transaction = await prisma.$transaction([deleteUser]);
+    const transaction = await prisma.$transaction([deletePresences, deleteUser]);
     return NextResponse.json(transaction);
   } else {
     return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });

@@ -25,7 +25,7 @@ const Home: NextPage = () => {
         </h1>
 
         <Image
-          src="/logo.png"
+          src="/logos/logo.png"
           priority
           alt="Logo"
           className="h-10 w-10 rounded-full"

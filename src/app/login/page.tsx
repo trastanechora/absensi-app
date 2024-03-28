@@ -36,7 +36,7 @@ const LoginPage = () => {
             alignItems: 'center',
           }}
         >
-          <Image src="/logo.png" alt="Company logo" width={256} height={144} />
+          <Image src="/logos/logo.png" alt="Company logo" width={256} height={144} />
           <Form type="login" />
         </Box>
       </Grid>

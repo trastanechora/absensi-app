@@ -8,6 +8,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Form from "@/components/form";
 
+import logo from '../../../public/logos/company.png';
+
 const LoginPage = () => {
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -36,7 +38,7 @@ const LoginPage = () => {
             alignItems: 'center',
           }}
         >
-          <Image src="/logos/logo.png" alt="Company logo" width={256} height={144} />
+          <Image src={logo} alt="Company logo" width={256} height={144} />
           <Form type="login" />
         </Box>
       </Grid>

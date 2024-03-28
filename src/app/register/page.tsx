@@ -8,6 +8,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Form from "@/components/form";
 
+import logo from '../../../public/logos/company.png';
+
 export default function RegisterPage() {
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -36,7 +38,7 @@ export default function RegisterPage() {
             alignItems: 'center',
           }}
         >
-          <Image src="/logos/logo.png" alt="Company logo" width={256} height={144} />
+          <Image src={logo} alt="Company logo" width={256} height={144} />
           <Form type="register" />
         </Box>
       </Grid>

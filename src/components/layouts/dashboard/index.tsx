@@ -30,6 +30,9 @@ import { menuList } from './constant'
 import styles from '@/styles/Dashboard.module.css'
 import { Container } from '@mui/material';
 
+import logo from '../../../../public/logos/company.png';
+import logoVertical from '../../../../public/logos/company-vertical.png';
+
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -172,14 +175,14 @@ const Dashboard: FC<PropsWithChildren<{ displayName: string }>> = ({ children, d
 					<ListItem disablePadding sx={{ display: 'block', textAlign: 'center', height: 76 }}>
 						{open ?
 							<Image
-								src="/logos/company.png"
+								src={logo}
 								priority
 								alt="Logo Perusahaan"
 								className="h-10 w-10 rounded-full"
 								width={128}
 								height={72}
 							/> : <Image
-								src="/logos/company-vertical.png"
+								src={logoVertical}
 								priority
 								alt="Logo Perusahaan Vertikal"
 								className="h-10 w-10 rounded-full"

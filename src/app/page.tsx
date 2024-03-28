@@ -8,6 +8,8 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Image from 'next/image';
 
+import logo from '../../public/logos/company.png';
+
 const Home: NextPage = () => {
   const router = useRouter()
 
@@ -25,7 +27,7 @@ const Home: NextPage = () => {
         </h1>
 
         <Image
-          src="/logos/logo.png"
+          src={logo}
           priority
           alt="Logo"
           className="h-10 w-10 rounded-full"

@@ -223,16 +223,6 @@ const Dashboard: FC<PropsWithChildren<{ displayName: string }>> = ({ children, d
         <Container maxWidth={false} disableGutters sx={{ width: '100%', minHeight: 1000 }}>
           {children}
         </Container>
-        <footer className={styles.footer}>
-          Made with ❤️ by
-          <a
-            href="https://www.linkedin.com/in/trastanechora/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Mae
-          </a>
-        </footer>
       </Box>
     </Box>
   );

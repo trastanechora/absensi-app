@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   
-  const presence = await prisma.presence.findFirst({ where: { id } });
+  const presence = await prisma.presence.findFirst({ where: { id }, include: { user: true, office: true } });
 	return NextResponse.json(presence);
 };
 

@@ -20,10 +20,8 @@ const LoginPage = () => {
         sm={false}
         md={4}
         sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
           backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+          backgroundColor: (t) => t.palette.primary.main,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

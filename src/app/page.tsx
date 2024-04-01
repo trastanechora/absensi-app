@@ -43,17 +43,6 @@ const Home: NextPage = () => {
           <Button variant="outlined" onClick={() => router.push('/login')} sx={{ textTransform: 'none', marginLeft: 1 }}>Masuk</Button>
         </Box>
       </main>
-
-      <footer className={styles.footer}>
-        Made with Love by
-        <a
-          href="https://www.linkedin.com/in/trastanechora/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Mae
-        </a>
-      </footer>
     </div>
   )
 }

@@ -7,6 +7,8 @@ import { Typography, Box, Divider } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
 
+import { convertDateToLocaleString } from '@/app/lib/date';
+import { convertDateToTime } from '@/app/lib/time';
 import styles from '@/styles/Dashboard.module.css'
 
 const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
@@ -33,7 +35,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Detail Karyawan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Detail Absensi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -42,7 +44,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Detail Karyawan
+            Detail Absensi
           </Typography>
         </Box>
 
@@ -51,79 +53,143 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
             Nama Karyawan:
           </Typography>
           <Typography variant="body1" gutterBottom>
-            {detail.name}
+            {detail.user?.name}
           </Typography>
         </Box>
-
         <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Informasi:
+            Lokasi:
           </Typography>
-          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.info}
+          <Typography variant="body1" gutterBottom>
+            {detail.office?.name}
           </Typography>
         </Box>
-
-        <Box sx={{ width: '100%', marginBottom: 2 }}>
+         <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Alamat:
+            Durasi:
           </Typography>
-          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.address}
+          <Typography variant="body1" gutterBottom>
+            {detail.duration}
           </Typography>
         </Box>
         <Divider sx={{ marginBottom: 3 }} />
 
+        <Typography sx={{ paddingBottom: 0 }} variant="h6" display="block" color="primary" gutterBottom>
+          Clock In:
+        </Typography>
         <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '33%' }}>
+          <Box sx={{ width: '50%' }}>
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              NIP:
+              Tanggal:
             </Typography>
             <Typography variant="body1" gutterBottom>
-              {detail.id_number}
+              {convertDateToLocaleString(new Date(detail.clockInDate))}
             </Typography>
           </Box>
-          <Box sx={{ width: '33%' }}>
+          <Box sx={{ width: '50%' }}>
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Status:
+              Waktu:
             </Typography>
             <Typography variant="body1" gutterBottom>
-              {detail.status}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Buka Praktik Sejak:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.service_start_date}
+              {convertDateToTime(new Date(detail.clockInDate))}
             </Typography>
           </Box>
         </Box>
 
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '33%' }}>
+        {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+          <Box sx={{ width: '50%' }}>
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Nomor HP:
+              Lokasi (lat):
             </Typography>
             <Typography variant="body1" gutterBottom>
               {detail.phone}
             </Typography>
           </Box>
-          <Box sx={{ width: '33%' }}>
+          <Box sx={{ width: '50%' }}>
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Email:
+              Lokasi (lon):
             </Typography>
             <Typography variant="body1" gutterBottom>
               {detail.email}
             </Typography>
           </Box>
-          <Box sx={{ width: '33%' }}>
+        </Box> */}
+
+        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+          <Box sx={{ width: '50%' }}>
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Tanggal Lahir:
+              Jarak ke Titik Lokasi:
             </Typography>
             <Typography variant="body1" gutterBottom>
-              {detail.date_of_birth}
+              {detail.clockInDistance}m
+            </Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Foto:
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {detail.clockInPhoto}
+            </Typography>
+          </Box>
+        </Box>
+
+        <Typography sx={{ paddingBottom: 0 }} variant="h6" display="block" color="primary" gutterBottom>
+          Clock Out:
+        </Typography>
+        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Tanggal:
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {convertDateToLocaleString(new Date(detail.clockOutDate))}
+            </Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Waktu:
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {convertDateToTime(new Date(detail.clockOutDate))}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Lokasi (lat):
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {detail.phone}
+            </Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Lokasi (lon):
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {detail.email}
+            </Typography>
+          </Box>
+        </Box> */}
+
+        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Jarak ke Titik Lokasi:
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {detail.clockOutDistance}m
+            </Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+              Foto:
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {detail.clockOutPhoto}
             </Typography>
           </Box>
         </Box>

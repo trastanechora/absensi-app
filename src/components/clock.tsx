@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
+import { convertDateToTime } from '@/app/lib/time';
 
 const Clock = () => {
 	const [currentTime, setCurrentTimee] = useState(new Date());
@@ -16,7 +17,7 @@ const Clock = () => {
 	
 	return (
 		<Typography variant="h3" gutterBottom>
-			{currentTime.getHours()}:{currentTime.getMinutes()}:{currentTime.getSeconds()}
+			{convertDateToTime(currentTime)}
 		</Typography>
 	)
 }

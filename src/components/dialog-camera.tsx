@@ -25,6 +25,11 @@ const DialogCamera = ({ isOpen, type, handleClickClose, handleSubmit }: Props) =
   const [numberOfCameras, setNumberOfCameras] = useState(1);
   const [image, setImage] = useState(null);
 
+  const handleClose = () => {
+    setImage(null);
+    handleClickClose();
+  }
+
   useEffect(() => {
     if (numberOfCameras === 0) {
       console.warn('Perangkat Anda tidak memiliki kamera yang didukung');
@@ -35,7 +40,7 @@ const DialogCamera = ({ isOpen, type, handleClickClose, handleSubmit }: Props) =
     <Dialog
       fullScreen
       open={isOpen}
-      onClose={handleClickClose}
+      onClose={handleClose}
       TransitionComponent={Transition}
       style={{ maxWidth: 430, margin: 'auto' }}
     >
@@ -44,7 +49,7 @@ const DialogCamera = ({ isOpen, type, handleClickClose, handleSubmit }: Props) =
           <IconButton
             edge="start"
             color="inherit"
-            onClick={handleClickClose}
+            onClick={handleClose}
             aria-label="close"
           >
             <CloseIcon />
@@ -57,7 +62,7 @@ const DialogCamera = ({ isOpen, type, handleClickClose, handleSubmit }: Props) =
           </Button>}
           {image && <Button color="inherit" onClick={() => {
             handleSubmit(image);
-            handleClickClose();
+            handleClose();
           }}>
             {type === 'in' ? 'Clock In' : 'Clock Out'}
           </Button>}

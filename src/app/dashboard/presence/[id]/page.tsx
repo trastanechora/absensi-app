@@ -128,9 +128,9 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
               Foto:
             </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.clockInPhoto}
-            </Typography>
+            <Box sx={{ width: '200px', height: '300px' }}>
+              <img src={detail.clockInPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} />
+            </Box>
           </Box>
         </Box>
 
@@ -188,9 +188,9 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
               Foto:
             </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.clockOutPhoto}
-            </Typography>
+            <Box sx={{ width: '200px', height: '300px' }}>
+              <img src={detail.clockOutPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} />
+            </Box>
           </Box>
         </Box>
         <Divider sx={{ marginBottom: 3 }} />

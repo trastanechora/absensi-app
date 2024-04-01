@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     // @ts-ignore
     await pump(file.stream(), fs.createWriteStream(filePath));
 
-    const imageUrl = HOST + `/uploads/${fileName}`;
+    const imageUrl = HOST + `/api/images/${fileName}`;
 
     const presenceId = formData.get('presenceId');
     const clockOutLat = formData.get('clockOutLat');

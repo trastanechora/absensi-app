@@ -9,7 +9,7 @@ export const convertDateToLocaleString = (date: Date) => {
 
 export const convertDateToShortString = (date: Date) => {
   const year = date.getFullYear();
-  const month = '0' + date.getMonth();
+  const month = '0' + (date.getMonth() + 1);
   const day = '0' + date.getDay();
   return `${year}-${month.slice(-2)}-${day.slice(-2)}`
 }

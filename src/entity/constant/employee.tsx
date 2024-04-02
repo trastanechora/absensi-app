@@ -18,11 +18,11 @@ export const statusList = [
 
 export const initialFilterState = {
   searchString: '',
-  searchType: '',
+  searchType: 'name',
   status: '',
-  statusType: 'f_status',
+  statusType: 'status',
   office: '',
-  officeType: 'f_office'
+  officeType: 'office'
 }
 
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
@@ -70,6 +70,6 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
 ];
 
 export const FILTER_OBJECT = [
-  { text: "Nama Karyawan", value: "f_name"},
-  { text: "Email", value: "f_email"},
+  { text: "Nama Karyawan", value: "name"},
+  { text: "Email", value: "email"},
 ];

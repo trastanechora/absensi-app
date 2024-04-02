@@ -31,7 +31,7 @@ const EmployeePage = () => {
         setLoading(false)
       })
     
-    fetch(`/api/office/list`)
+    fetch(`/api/office/list?page=1&limit=1000`)
       .then((res) => res.json())
       .then((resObject) => {
         setOfficeOptions(resObject)

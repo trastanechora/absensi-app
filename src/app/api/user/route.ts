@@ -12,10 +12,10 @@ export async function GET(req: NextRequest) {
   // @ts-ignore
   if (currentAccount.role !== 'admin') return NextResponse.json({ error: "Your account is unauthorize" }, { status: 403 });
 
-  const filterName = req.nextUrl.searchParams.get('f_name');
-  const filterEmail = req.nextUrl.searchParams.get('f_email');
-  const filterStatus = req.nextUrl.searchParams.get('f_status');
-  const filterOffice = req.nextUrl.searchParams.get('f_office');
+  const filterName = req.nextUrl.searchParams.get('name');
+  const filterEmail = req.nextUrl.searchParams.get('email');
+  const filterStatus = req.nextUrl.searchParams.get('status');
+  const filterOffice = req.nextUrl.searchParams.get('office');
 
   const page = req.nextUrl.searchParams.get('page') || 1;
   const limit = req.nextUrl.searchParams.get('limit') || 10;
@@ -27,8 +27,11 @@ export async function GET(req: NextRequest) {
       createdAt: 'desc'
     },
     where: {
-      ...(filterName && { name: { contains: filterName }}),
-      ...(filterEmail && { email: { contains: filterEmail }}),
+      role: {
+        not: 'admin'
+      },
+      ...(filterName && { name: { contains: filterName, mode: 'insensitive' }}),
+      ...(filterEmail && { email: { contains: filterEmail, mode: 'insensitive' }}),
       ...(filterStatus && { status: filterStatus}),
       ...(filterOffice && { officeId: filterOffice}),
     },

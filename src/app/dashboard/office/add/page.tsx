@@ -41,13 +41,19 @@ const InsertPatientPage = () => {
     fetch('/api/office', { method: 'POST', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((responseObject) => {
+        if (responseObject.error) {
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan lokasi, error: ${responseObject.error}`, severity: 'error' } });
+          setLoading(false);
+          return;
+        }
+
         router.replace('/dashboard/office');
-        console.log('SUCCESS!', responseObject)
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan lokasi ${values.name}`, severity: 'success' } })
-        setLoading(false)
+        console.log('SUCCESS!', responseObject);
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan lokasi ${values.name}`, severity: 'success' } });
+        setLoading(false);
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan lokasi, error: ${err}`, severity: 'error' } })
-        setLoading(false)
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan lokasi, error: ${err}`, severity: 'error' } });
+        setLoading(false);
       })
   }
 

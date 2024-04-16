@@ -5,7 +5,8 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 
 import { Autocomplete, TextField, Container, Box, FormControl } from '@mui/material';
-import { useCallback, useState, useMemo, useRef, useEffect } from 'react';
+import { useCallback, useState, useMemo, useRef, useEffect, forwardRef } from 'react';
+import type { RefAttributes } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useMapEvents } from 'react-leaflet/hooks'
 import { OpenStreetMapProvider, GeoSearchControl } from 'leaflet-geosearch';
@@ -18,6 +19,31 @@ interface Props {
 	coords: [number, number];
 	setCurrentPayload: (coords: number[]) => void;
 }
+
+interface CustomMapProps {
+	coord: LatLngExpression;
+	setCoord: (latLong: [number, number]) => void
+	eventHandlers: () => void;
+}
+
+// @ts-ignore
+const CustomMapWithMarker = forwardRef<RefAttributes<LeafletMarker<any>>, CustomMapProps>(({ coord, setCoord, eventHandlers }, ref) => {
+	const currentMap = useMapEvents({
+		click: (e) => {
+			setCoord([e.latlng.lat, e.latlng.lng]);
+			currentMap.setView([e.latlng.lat, e.latlng.lng]);
+		},
+	})
+
+	return (
+		// @ts-ignore
+		<Marker ref={ref} position={coord} draggable eventHandlers={eventHandlers}>
+			<Popup>
+				Titik tengah lokasi
+			</Popup>
+		</Marker>
+	)
+});
 
 const InputMap = ({ coords, setCurrentPayload }: Props) => {
 	const provider = new OpenStreetMapProvider();
@@ -46,24 +72,6 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 		console.warn('[DEBUG] seearch', e.target.value);
 		setSearch(e.target.value);
 	}
-
-	const CustomMapWithMarker = useCallback(({ coord }: { coord: LatLngExpression }) => {
-		const currentMap = useMapEvents({
-			click: (e) => {
-				console.warn('[INFO] click', e);
-				setCoord([e.latlng.lat, e.latlng.lng]);
-				currentMap.setView([e.latlng.lat, e.latlng.lng]);
-			},
-		})
-
-		return (
-			<Marker ref={markerRef} position={coord} draggable eventHandlers={eventHandlers}>
-				<Popup>
-					Titik tengah lokasi
-				</Popup>
-			</Marker>
-		)
-	}, []);
 
 	useEffect(() => {
 		if (!search) {
@@ -130,7 +138,8 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 						attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					/>
-					<CustomMapWithMarker coord={coord} />
+					{/* @ts-ignore */}
+					<CustomMapWithMarker ref={markerRef} coord={coord} setCoord={setCoord} eventHandlers={eventHandlers} />
 				</MapContainer>
 			</Box>
 		</Container>

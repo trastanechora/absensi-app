@@ -45,6 +45,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const { name, role = 'staff', email, password = 'pas123!', officeId, isStrictRadius = true, isStrictDuration = true } = await req.json();
+  if (!name) return NextResponse.json({ error: "Nama tidak boleh kosong" }, { status: 400 });
+  if (!email) return NextResponse.json({ error: "Email tidak boleh kosong" }, { status: 400 });
+
   const exists = await prisma.user.findUnique({
     where: {
       email,

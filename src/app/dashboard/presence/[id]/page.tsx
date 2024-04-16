@@ -129,7 +129,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
               Foto:
             </Typography>
             <Box sx={{ width: '200px', height: '300px' }}>
-              <img src={detail.clockInPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} />
+              <img src={detail.clockInPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} alt="Clock in photo" />
             </Box>
           </Box>
         </Box>
@@ -156,25 +156,6 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
           </Box>
         </Box>
 
-        {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Lokasi (lat):
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.phone}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Lokasi (lon):
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.email}
-            </Typography>
-          </Box>
-        </Box> */}
-
         <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
           <Box sx={{ width: '50%' }}>
             <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
@@ -189,7 +170,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
               Foto:
             </Typography>
             <Box sx={{ width: '200px', height: '300px' }}>
-              <img src={detail.clockOutPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} />
+              <img src={detail.clockOutPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} alt="Clock out photo" />
             </Box>
           </Box>
         </Box>

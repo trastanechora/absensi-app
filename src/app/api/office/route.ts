@@ -24,6 +24,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   const { name, radius = 200, duration = 5 * 60 * 60 * 1000, lat, long } = await req.json();
+  if (!name) {
+    return NextResponse.json({ error: "Nama tidak boleh kosong" }, { status: 400 });
+  }
   const exists = await prisma.office.findUnique({
     where: {
       name,

@@ -33,6 +33,12 @@ const InsertPatientPage = () => {
     fetch('/api/user', { method: 'POST', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((responseObject) => {
+        if (responseObject.error) {
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan karyawan, error: ${responseObject.error}`, severity: 'error' } });
+          setLoading(false);
+          return;
+        }
+
         console.log('SUCCESS!', responseObject)
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan karyawan ${values.name}`, severity: 'success' } });
         router.replace('/dashboard/employee')

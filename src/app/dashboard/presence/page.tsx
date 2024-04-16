@@ -7,11 +7,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PrintIcon from '@mui/icons-material/Print';
 import { DataGrid } from '@mui/x-data-grid';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/presence';
+import { TABLE_HEADER, FILTER_OBJECT, initialFilterState } from '@/entity/constant/presence';
 
-import { convertDateToLocaleString } from '@/app/lib/date';
+import { convertDateToExcelShortString } from '@/app/lib/date';
 import { convertDateToTime } from '@/app/lib/time';
 
 const EmployeePage = () => {
@@ -25,9 +27,9 @@ const EmployeePage = () => {
 
   const downloadCSV = useCallback(() => {
     const csvContent = "data:text/csv;charset=utf-8," +
-      "Nama,Lokasi,Tanggal,Clock In,Clock Out\n" +
+      "Nama,Lokasi,Tanggal,Durasi,Waktu Clock In,Jarak Clock In,Foto Clock In,Waktu Clock Out,Jarak Clock Out,Foto Clock Out\n" +
       data.map(row =>
-        `"${row.user.name}","${row.office.name}","${convertDateToLocaleString(new Date(row.createdAt))}","${`${convertDateToTime(new Date(row.clockInDate))} | ${row.clockInDistance}m`}","${`${convertDateToTime(new Date(row.clockOutDate))} | ${row.clockOutDistance ? `${row.clockOutDistance}m` : '-'}`}"`
+        `"${row.user.name}","${row.office.name}","${convertDateToExcelShortString(new Date(row.createdAt))}","${row.duration}","${`${convertDateToTime(new Date(row.clockInDate))}`}","${row.clockInDistance}m",""${row.clockInPhoto}"","${row.clockOutDate ? convertDateToTime(new Date(row.clockOutDate)) : '-'}","${row.clockOutDistance ? row.clockOutDistance : '-'}","${row.clockInPhoto ? row.clockInPhoto : '-'}"`
       ).join("\n");
 
     console.warn('[DEBUG] csvContent', csvContent);
@@ -45,7 +47,7 @@ const EmployeePage = () => {
   useEffect(() => {
     if (page === 0) return;
     setLoading(true)
-    fetch(`/api/presence?page=${page}&limit=${rowPerPage}`)
+    fetch(`/api/presence?page=${page || 1}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
         setData(resObject)
@@ -76,14 +78,28 @@ const EmployeePage = () => {
   }
 
   const handleApplyFilter = () => {
+    console.warn('[debug] values', values);
     setLoading(true)
     const filterArray = [];
     if (values.searchString && values.searchType) {
       filterArray.push(`${values.searchType}=${values.searchString}`);
     }
+
+    if (values.dateStart && values.dateStart !== null) {
+      filterArray.push(`${values.dateStartType}=${values.dateStart}`);
+    }
+
+    if (values.dateEnd && values.dateEnd !== null) {
+      filterArray.push(`${values.dateEndType}=${values.dateEnd}`);
+    }
+
+    if (values.office && values.office !== null) {
+      filterArray.push(`${values.officeType}=${values.office}`);
+    }
+
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/presence?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/presence?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
         setData(resObject);
@@ -131,7 +147,7 @@ const EmployeePage = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography variant="caption" display="block">
+              {/* <Typography variant="caption" display="block">
                 Isi kolom input &quot;Kata Kunci&quot; apa dan &quot;Berdasarkan Kolom&quot; mana yang ingin Anda tampilkan kemudian tekan &quot;Terapkan Filter&quot;.
               </Typography>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', marginTop: 2 }}>
@@ -157,23 +173,23 @@ const EmployeePage = () => {
                     </FormControl>
                   </Box>
                 </Container>
-              </Container>
-              <Typography variant="caption" display="block">
+              </Container> */}
+              {/* <Typography variant="caption" display="block">
                 Atau pilih berdasarkan beberapa kolom yang memiliki nilai pasti berikut:
-              </Typography>
+              </Typography> */}
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
-                <Box sx={{ width: '50%', paddingRight: 1 }}>
+                <Box sx={{ width: '50%' }}>
                   <FormControl fullWidth>
-                    <InputLabel id="status-label">Status</InputLabel>
+                    <InputLabel id="office-label">Kantor</InputLabel>
                     <Select
-                      labelId="status-label"
-                      id="status"
-                      label="Status"
-                      value={values.status}
-                      onChange={handleFilterChange('status')}
+                      labelId="office-label"
+                      id="office"
+                      label="Kantor"
+                      value={values.office}
+                      onChange={handleFilterChange('office')}
                       fullWidth
                     >
-                      {statusList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
+                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
                     </Select>
                   </FormControl>
                 </Box>
@@ -188,10 +204,45 @@ const EmployeePage = () => {
                       onChange={handleFilterChange('office')}
                       fullWidth
                     >
-                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
+                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
                     </Select>
                   </FormControl>
                 </Box>
+              </Container>
+              <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
+                <FormControl fullWidth>
+                  <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
+                    <Box sx={{ width: '100%', paddingRight: 1 }}>
+                      <DatePicker
+                        label={'Tanggal Awal'}
+                        value={values.dateStart}
+                        maxDate={dayjs(values.dateEnd)}
+                        onChange={value => handleFilterChange('dateStart')({ target: { value: value?.format('YYYY-MM-DD') || null } })}
+                        format="LL"
+                        slotProps={{
+                          textField: {
+                            placeholder: '',
+                            style: { width: '100%' }
+                          },
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ width: '100%', paddingLeft: 1 }}>
+                      <DatePicker
+                        label={'Tanggal Akhir'}
+                        minDate={dayjs(values.dateStart)}
+                        onChange={value => handleFilterChange('dateEnd')({ target: { value: value?.format('YYYY-MM-DD') || null } })}
+                        format="LL"
+                        slotProps={{
+                          textField: {
+                            helperText: '',
+                            style: { width: '100%' }
+                          },
+                        }}
+                      />
+                    </Box>
+                  </Container>
+                </FormControl>
               </Container>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
                 <Button variant="outlined" onClick={handleResetFilter} disabled={isLoading} sx={{ width: '30%', textTransform: 'none', marginRight: 1 }}>Reset Filter</Button>

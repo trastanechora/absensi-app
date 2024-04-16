@@ -14,3 +14,8 @@
 	width: 100%;
 	margin-bottom: 12px;
 }
+
+.leaflet-container {
+	width: 100wh;
+	height: 100vh;
+}

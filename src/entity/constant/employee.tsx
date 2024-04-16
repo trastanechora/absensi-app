@@ -41,7 +41,14 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
   },
   { field: "email", headerName: "Alamat Email", width: 250, sortable: false },
   {
-    field: "isStrict", headerName: "Clock In/Out Dari Luar Area", width: 200, sortable: false,
+    field: "isStrictRadius", headerName: "Clock In/Out Dari Luar Area", width: 200, sortable: false,
+    renderCell: (params: any) => {
+      if (params.value) return "Tidak Diperbolehkan"
+      return "Diperbolehkan"
+    }
+  },
+  {
+    field: "isStrictDuration", headerName: "Clock In/Out Kurang Dari Durasi", width: 200, sortable: false,
     renderCell: (params: any) => {
       if (params.value) return "Tidak Diperbolehkan"
       return "Diperbolehkan"

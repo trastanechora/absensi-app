@@ -16,7 +16,8 @@ const initialState: ProfileState = {
     password: '',
     createdAt: '',
     updatedAt: '',
-    isStrict: false,
+    isStrictRadius: true,
+    isStrictDuration: true,
     office: {
         id: '',
         name: '',

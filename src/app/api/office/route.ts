@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
-  const { name, radius, lat, long } = await req.json();
+  const { name, radius = 200, duration = 5 * 60 * 60 * 1000, lat, long } = await req.json();
   const exists = await prisma.office.findUnique({
     where: {
       name,
@@ -36,8 +36,9 @@ export async function POST(req: Request) {
       data: {
         name,
         radius,
-        lat,
-        long
+        duration,
+        lat: String(lat),
+        long: (String(long))
       },
     });
     return NextResponse.json(user);

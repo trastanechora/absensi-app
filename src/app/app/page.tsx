@@ -35,9 +35,17 @@ const AppHomePage = () => {
   }, []);
 
   const handleDialogCameraOpen = useCallback((type: string) => {
-    if (myProfile.isStrict) {
+    if (myProfile.isStrictRadius) {
       if (myProfile.office.radius < mapPayloadRef.current.distance) {
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Tidak dapat Clock In, pastikan Anda berada dalam radius lokasi`, severity: 'error' } });
+        return;
+      }
+    }
+
+    // TODO: add validation on duration
+    if (myProfile.isStrictDuration) {
+      if (myProfile.office.radius < mapPayloadRef.current.distance) {
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Tidak dapat Clock In, pastikan durasi memenuhi batas minimal`, severity: 'error' } });
         return;
       }
     }

@@ -19,7 +19,8 @@ const InsertPatientPage = () => {
     name: '',
     email: '',
     officeId: '',
-    isStrict: true,
+    isStrictRadius: true,
+    isStrictDuration: true,
   });
 
   const handleInputChange = (prop: string) => (event: any) => {
@@ -43,7 +44,7 @@ const InsertPatientPage = () => {
   }
 
   useEffect(() => {
-    fetch(`/api/office/list`)
+    fetch(`/api/office/list?page=1&limit=1000`)
       .then((res) => res.json())
       .then((resObject) => {
         setOfficeOptions(resObject)
@@ -71,7 +72,7 @@ const InsertPatientPage = () => {
 
         <Container maxWidth={false} disableGutters sx={{ width: '100%', marginTop: 2 }}>
           <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <Box sx={{ width: '50%', paddingRight: 1 }}>
+            <Box sx={{ width: '100%', paddingRight: 1 }}>
               <FormControl fullWidth>
                 <TextField
                   id="name-input"
@@ -90,11 +91,27 @@ const InsertPatientPage = () => {
               <FormControl fullWidth>
                 <InputLabel id="office-label">Dilarang Clock in / out di luar area</InputLabel>
                 <Select
-                  labelId="isStrict-label"
-                  id="isStrict"
+                  labelId="isStrictRadius-label"
+                  id="isStrictRadius"
                   label="Dilarang Clock in / out di luar area"
-                  value={values.isStrict}
-                  onChange={handleInputChange('isStrict')}
+                  value={values.isStrictRadius}
+                  onChange={handleInputChange('isStrictRadius')}
+                  fullWidth
+                >
+                  {/* @ts-ignore */}
+                  {[{ id: true, name: 'Ya' }, { id: false, name: 'Tidak' }].map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '50%', paddingLeft: 1 }}>
+              <FormControl fullWidth>
+                <InputLabel id="office-label">Dilarang Clock in / out kurang dari durasi</InputLabel>
+                <Select
+                  labelId="isStrictDuration-label"
+                  id="isStrictDuration"
+                  label="Dilarang Clock in / out kurang dari durasi"
+                  value={values.isStrictDuration}
+                  onChange={handleInputChange('isStrictDuration')}
                   fullWidth
                 >
                   {/* @ts-ignore */}

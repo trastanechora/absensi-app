@@ -27,8 +27,10 @@ export const statusList = [
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
   { field: "name", headerName: "Nama Lokasi", width: 300, sortable: false },
   { field: "radius", headerName: "Radius", width: 250, sortable: false },
-  { field: "lat", headerName: "Latitude", width: 200, sortable: false },
-  { field: "long", headerName: "Longitude", width: 200, sortable: false },
+  {
+    field: "duration", headerName: "Durasi", width: 250, sortable: false,
+    renderCell: (params: any) => `${params.value / 60 / 60 / 1000} Jam`
+  },
   {
     field: 'action',
     headerName: 'Tindakan',
@@ -37,7 +39,7 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
     renderCell: (params: any) =>
       <ButtonGroup variant="outlined" aria-label="text button group">
         <Button onClick={() => callbackFunction('view', params)} sx={{ textTransform: 'none' }} startIcon={<VisibilityIcon />}>Detail</Button>
-        <Button disabled onClick={() => callbackFunction('edit', params)} sx={{ textTransform: 'none' }} startIcon={<EditIcon />}>Ubah</Button>
+        <Button onClick={() => callbackFunction('edit', params)} sx={{ textTransform: 'none' }} startIcon={<EditIcon />}>Ubah</Button>
         <Button disabled onClick={() => callbackFunction('delete', params)} sx={{ textTransform: 'none' }} startIcon={<DeleteForeverIcon />}>Hapus</Button>
       </ButtonGroup>
   }

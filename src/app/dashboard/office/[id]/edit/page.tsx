@@ -2,129 +2,63 @@
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import dayjs from 'dayjs';
+import dynamic from 'next/dynamic';
+
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Divider, Container, TextField, FormControl, Button, FormLabel, FormGroup, FormControlLabel, Checkbox, FormHelperText } from '@mui/material';
+import { Typography, Box, Divider, Container, TextField, FormControl, Button, InputAdornment, Skeleton } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useNotificationContext } from '@/context/notification';
 import styles from '@/styles/Dashboard.module.css';
 
-import type { Dayjs } from 'dayjs';
+const InputMap = dynamic(() => import('@/components/input-map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={356} /> });
 
 const EditOfficePage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const [_, dispatch] = useNotificationContext()
   const router = useRouter()
   const [isLoading, setLoading] = useState<boolean>(false)
-  const [datePickerBirthValue, setDatePickerBirthValue] = useState<Dayjs | null>(dayjs());
-  const [datePickerStartValue, setDatePickerStartValue] = useState<Dayjs | null>(dayjs());
 
-  const [values, setValues] = useState<any>({
+  const [values, setValues] = useState({
     name: '',
-    email: '',
-    phone: '',
-    gender: '',
-    idNumber: '',
-    dateOfBirth: '',
-    address: '',
-    info: '',
-    doctorSchedule: {
-      monday: {
-        isChecked: false,
-        time: ''
-      },
-      tuesday: {
-        isChecked: false,
-        time: ''
-      },
-      wednesday: {
-        isChecked: false,
-        time: ''
-      },
-      thursday: {
-        isChecked: false,
-        time: ''
-      },
-      friday: {
-        isChecked: false,
-        time: ''
-      },
-      saturday: {
-        isChecked: false,
-        time: ''
-      },
-      sunday: {
-        isChecked: false,
-        time: ''
-      }
-    },
-    photo: '-',
-    status: 'active',
-    licenseNumber: '',
-    paraf: '-',
-    serviceStartDate: '',
+    radius: 0,
+    duration: 0,
+    lat: 0,
+    long: 0,
   });
-  const handleInputChange = (prop: string) => (event: any) => {
-    setValues({ ...values, [prop]: event.target.value });
+
+  const handleInputChange = (prop: string, type: string) => (event: any) => {
+    const newValue = type === 'number' ? Number(event.target.value) : event.target.value;
+    setValues({ ...values, [prop]: newValue });
   };
 
-  const handleScheduleChecked = (event: any) => {
-    const name: string = event.target.name
-    setValues({
-      ...values, doctorSchedule: {
-        ...values.doctorSchedule,
-        [name]: {
-          ...values.doctorSchedule[name],
-          isChecked: event.target.checked
-        }
-      }
-    });
-  };
-
-  const handleScheduleTime = (event: any) => {
-    const name: string = event.target.name
-    setValues({
-      ...values, doctorSchedule: {
-        ...values.doctorSchedule,
-        [name]: {
-          ...values.doctorSchedule[name],
-          time: event.target.value
-        }
-      }
-    });
-  };
+  const handleOnLocationChange = (newValue: number[]) => {
+    setValues(prev => ({ ...prev, lat: newValue[0], long: newValue[1] }));
+  }
 
   useEffect(() => {
     if (id) {
       setLoading(true);
-      fetch(`/api/user?id=${id}`)
+      fetch(`/api/office/${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
           setLoading(false);
-          setValues({
-            name: responseObject.name,
-            email: responseObject.email,
-          });
+          setValues({ ...responseObject, duration: responseObject.duration / 60 / 60 / 1000 });
         })
     }
   }, [id]);
 
   const handleSubmit = () => {
     setLoading(true)
-    const body = {
-      ...values,
-      dateOfBirth: datePickerBirthValue?.format('YYYY-MM-DD'),
-      serviceStartDate: datePickerStartValue?.format('YYYY-MM-DD'),
-    }
+    const body = { ...values, duration: values.duration * 60 * 60 * 1000 };
     fetch(`/api/office/${id}`, { method: 'PUT', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((_) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil ubah data lokasi ${values.name}`, severity: 'success' } });
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil ubah data lokasi ${values.name}`, severity: 'success' } })
         router.replace('/dashboard/office')
         setLoading(false)
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal ubah data lokasi, error: ${err}`, severity: 'error' } });
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal ubah data lokasi, error: ${err}`, severity: 'error' } })
         setLoading(false)
       })
   }
@@ -134,7 +68,7 @@ const EditOfficePage = ({ params }: { params: { id: string } }) => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Ubah Detail Karyawan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Ubah Detail Lokasi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -143,7 +77,7 @@ const EditOfficePage = ({ params }: { params: { id: string } }) => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Ubah Data Karyawan
+            Ubah Data Lokasi
           </Typography>
         </Box>
 
@@ -153,10 +87,10 @@ const EditOfficePage = ({ params }: { params: { id: string } }) => {
               <FormControl fullWidth>
                 <TextField
                   id="name-input"
-                  label="Nama Karyawan"
+                  label="Nama Lokasi"
                   name="name"
                   value={values.name}
-                  onChange={handleInputChange('name')}
+                  onChange={handleInputChange('name', 'string')}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -164,19 +98,21 @@ const EditOfficePage = ({ params }: { params: { id: string } }) => {
                 />
               </FormControl>
             </Box>
-          </Container>
+					</Container>
+
           <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <Box sx={{
-              width: '50%',
-              paddingRight: 1
-            }}>
+            <Box sx={{ width: '50%', marginRight: 1 }}>
               <FormControl fullWidth>
                 <TextField
-                  id="email-input"
-                  label="Email"
-                  name="email"
-                  value={values.email}
-                  onChange={handleInputChange('email')}
+                  id="radius-input"
+                  label="Radius (dalam meter)"
+                  name="radius"
+                  type='number'
+                  value={values.radius}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">m</InputAdornment>
+                  }}
+                  onChange={handleInputChange('radius', 'number')}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -184,17 +120,18 @@ const EditOfficePage = ({ params }: { params: { id: string } }) => {
                 />
               </FormControl>
             </Box>
-            <Box sx={{
-              width: '50%',
-              paddingLeft: 1
-            }}>
+            <Box sx={{ width: '50%', marginLeft: 1 }}>
               <FormControl fullWidth>
                 <TextField
-                  id="phone-input"
-                  label="Nomor HP"
-                  name="phone"
-                  value={values.phone}
-                  onChange={handleInputChange('phone')}
+                  id="duration-input"
+                  label="Durasi (dalam jam)"
+                  name="duration"
+                  type='number'
+                  value={values.duration}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">jam</InputAdornment>
+                  }}
+                  onChange={handleInputChange('duration', 'number')}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -203,42 +140,11 @@ const EditOfficePage = ({ params }: { params: { id: string } }) => {
               </FormControl>
             </Box>
           </Container>
-          <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <FormControl fullWidth>
-              <TextField
-                id="info-input"
-                label="Informasi Umum"
-                name="info"
-                value={values.info}
-                onChange={handleInputChange('info')}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                multiline
-                rows={3}
-                maxRows={6}
-                disabled={isLoading}
-              />
-            </FormControl>
+
+          <Container disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
+            <InputMap setCurrentPayload={handleOnLocationChange} coords={[values.lat, values.long]} />
           </Container>
-          <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <FormControl fullWidth>
-              <TextField
-                id="address-input"
-                label="Alamat Tempat Tinggal Sekarang"
-                name="address"
-                value={values.address}
-                onChange={handleInputChange('address')}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                multiline
-                rows={3}
-                maxRows={6}
-                disabled={isLoading}
-              />
-            </FormControl>
-          </Container>
+        
           <Divider sx={{ marginBottom: 3 }} />
 
           <Container maxWidth={false} disableGutters sx={{ width: '100%' }}>

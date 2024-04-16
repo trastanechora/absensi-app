@@ -14,7 +14,8 @@ export interface ProfileState {
   password:string;
   createdAt:string;
   updatedAt:string;
-  isStrict: boolean;
+  isStrictRadius: boolean;
+  isStrictDuration: boolean;
   office: {
     id: string;
     name: string;

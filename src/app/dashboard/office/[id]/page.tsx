@@ -1,13 +1,16 @@
 'use client';
 
 import Head from 'next/head'
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Divider } from '@mui/material';
+import { Typography, Box, Divider, Container, Skeleton } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
 
 import styles from '@/styles/Dashboard.module.css'
+
+const ViewMap = dynamic(() => import('@/components/view-map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={356} /> });
 
 const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
   const [isLoading, setLoading] = useState<boolean>(false)
@@ -54,79 +57,29 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
             {detail.name}
           </Typography>
         </Box>
+        
 
-        {/* <Box sx={{ width: '100%', marginBottom: 2 }}>
+        <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Informasi:
+            Radius:
           </Typography>
-          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.info}
+          <Typography variant="body1" gutterBottom>
+            {detail.radius} meter
           </Typography>
         </Box>
 
         <Box sx={{ width: '100%', marginBottom: 2 }}>
           <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Alamat:
+            Durasi:
           </Typography>
-          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.address}
+          <Typography variant="body1" gutterBottom>
+            {detail.duration / 60 / 60 / 1000} Jam
           </Typography>
         </Box>
-        <Divider sx={{ marginBottom: 3 }} />
 
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              NIP:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.id_number}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Status:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.status}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Buka Praktik Sejak:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.service_start_date}
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Nomor HP:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.phone}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Email:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.email}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '33%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Tanggal Lahir:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.date_of_birth}
-            </Typography>
-          </Box>
-        </Box> */}
+        <Container disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
+          <ViewMap coords={[detail.lat, detail.long]} radius={detail.radius} />
+        </Container>
         <Divider sx={{ marginBottom: 3 }} />
       </main>
     </div>

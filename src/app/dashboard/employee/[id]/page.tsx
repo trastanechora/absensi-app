@@ -96,7 +96,15 @@ const EmployeeDetailPage = ({ params }: { params: { id: string } }) => {
             Clock in/out di luar radius:
           </Typography>
           <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
-            {detail.isStrict ? 'Tidak' : 'Ya'}
+            {detail.isStrictRadius ? 'Tidak' : 'Ya'}
+          </Typography>
+        </Box>
+        <Box sx={{ width: '100%', marginBottom: 2 }}>
+          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+            Diperbolehkan Clock tanpa durasi:
+          </Typography>
+          <Typography sx={{ fontWeight: '500' }} variant="body1" gutterBottom>
+            {detail.isStrictDuration ? 'Tidak' : 'Ya'}
           </Typography>
         </Box>
         <Divider sx={{ marginBottom: 3 }} />

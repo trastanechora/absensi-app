@@ -18,16 +18,18 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     },
   });
   if (user) {
-    const { name, role, email, password, officeId, isStrict } = await req.json();
+    const { name, role, email, password, officeId, isStrictRadius, isStrictDuration } = await req.json();
     const payload: {
       name?: string;
       role?: string;
       email?: string;
       password?: string;
       officeId?: string;
-      isStrict?: boolean;
+      isStrictRadius?: boolean;
+      isStrictDuration?: boolean;
     } = {
-      isStrict
+      isStrictRadius,
+      isStrictDuration
     };
 
     if (name) payload.name = name;

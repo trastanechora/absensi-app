@@ -2,8 +2,8 @@ import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const page = req.nextUrl.searchParams.get('page');
-  const limit = req.nextUrl.searchParams.get('limit');
+  const page = req.nextUrl.searchParams.get('page') || 1;
+  const limit = req.nextUrl.searchParams.get('limit') || 100;
 
   const offices = await prisma.office.findMany({
     orderBy: {

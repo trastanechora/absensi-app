@@ -16,21 +16,24 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       id,
     },
   });
+
   if (office) {
-    const { name, lat, lon, radius } = await req.json();
+    const { name, lat, long, radius, duration } = await req.json();
     const payload: {
       name?: string;
       lat?: string;
-      lon?: string;
-      radius?: string;
+      long?: string;
+      radius?: number;
+      duration?: number;
     } = {};
 
     if (name) payload.name = name;
-    if (lat) payload.lat = lat;
-    if (lon) payload.lon = lon;
+    if (lat) payload.lat = String(lat);
+    if (long) payload.long = String(long);
     if (radius) payload.radius = radius;
+    if (duration || duration === 0) payload.duration = duration;
 
-    const updatedOffice = await prisma.user.update({
+    const updatedOffice = await prisma.office.update({
       where: {
         id,
       },

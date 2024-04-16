@@ -1,20 +1,26 @@
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import { IconButton, Box, Tooltip, Container, Button } from '@mui/material';
+import { tooltipClasses } from '@mui/material/Tooltip';
+import type { TooltipProps } from '@mui/material/Tooltip';
+
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AccountIcon from '@mui/icons-material/AccountCircle';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import PlaceIcon from '@mui/icons-material/Place';
 
 import { convertDateToLocaleString } from '@/app/lib/date';
-import { convertDateToTime } from '@/app/lib/time';
 
 export const initialFilterState = {
   searchString: '',
   searchType: '',
-  status: '',
-  statusType: 'f_status',
+  dateStart: null,
+  dateStartType: 'start',
+  dateEnd: null,
+  dateEndType: 'end',
   office: '',
-  officeType: 'f_office'
+  officeType: 'office'
 };
 
 export const statusList = [
@@ -27,6 +33,14 @@ export const statusList = [
     value: 'inactive'
   }
 ];
+
+const NoMaxWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: 'none',
+  },
+});
 
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
   {
@@ -50,13 +64,40 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
     renderCell: (params: any) => convertDateToLocaleString(new Date(params.row.createdAt))
   },
   {
-    field: "clock_in", headerName: "Clock In", width: 250, sortable: false,
-    renderCell: (params: any) => `${convertDateToTime(new Date(params.row.clockInDate))} | ${params.row.clockInDistance}m`
+    field: "duration", headerName: "Durasi", width: 300, sortable: false,
+    renderCell: (params: any) => params.row.duration || '-',
   },
   {
-    field: "clock_out", headerName: "Clock Out", width: 250, sortable: false,
-    renderCell: (params: any) => `${convertDateToTime(new Date(params.row.clockOutDate))} | ${params.row.clockOutDistance ? `${params.row.clockOutDistance}m` : '-'}`
+    field: "photo", headerName: "Foto", width: 300, sortable: false,
+    renderCell: (params: any) => (
+      <NoMaxWidthTooltip
+        title={
+          <Container maxWidth={false} disableGutters sx={{ display: 'flex', width: '500px' }}>
+            <Box sx={{ width: '50%' }}>
+              Clock In:
+              <img src={params.row.clockInPhoto} alt="Clock in photo" style={{ maxWidth: '100%', height: 'auto' }} />
+            </Box>
+            <Box sx={{ width: '50%' }}>
+              Clock Out:
+              {params.row.clockOutPhoto && <img src={params.row.clockOutPhoto} alt="Clock out photo" style={{ maxWidth: '100%', height: 'auto' }} />}
+            </Box>
+          </Container>
+        }
+      >
+        <IconButton>
+          <PhotoLibraryIcon />
+        </IconButton>
+      </NoMaxWidthTooltip>
+    )
   },
+  // {
+  //   field: "clock_in", headerName: "Clock In", width: 250, sortable: false,
+  //   renderCell: (params: any) => `${convertDateToTime(new Date(params.row.clockInDate))} | ${params.row.clockInDistance}m`
+  // },
+  // {
+  //   field: "clock_out", headerName: "Clock Out", width: 250, sortable: false,
+  //   renderCell: (params: any) => `${convertDateToTime(new Date(params.row.clockOutDate))} | ${params.row.clockOutDistance ? `${params.row.clockOutDistance}m` : '-'}`
+  // },
   {
     field: 'action',
     headerName: 'Tindakan',

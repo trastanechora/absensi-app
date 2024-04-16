@@ -24,10 +24,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import 'dayjs/locale/id';
 
 import { drawerWidth, openedMixin, closedMixin, DrawerHeader } from './style'
 import { menuList } from './constant'
-import styles from '@/styles/Dashboard.module.css'
 import { Container } from '@mui/material';
 
 import logo from '../../../../public/logos/company.png';
@@ -220,9 +222,11 @@ const Dashboard: FC<PropsWithChildren<{ displayName: string }>> = ({ children, d
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Container maxWidth={false} disableGutters sx={{ width: '100%', minHeight: 1000 }}>
-          {children}
-        </Container>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="id">
+          <Container maxWidth={false} disableGutters sx={{ width: '100%', minHeight: 1000 }}>
+            {children}
+          </Container>
+        </LocalizationProvider>
       </Box>
     </Box>
   );

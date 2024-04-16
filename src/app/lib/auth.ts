@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
 				});
 
         if (!user || !(await compare(password, user.password))) {
-          throw new Error("Email atau passowrd salah");
+          throw new Error("Email atau password salah");
 				}
 
         return user;

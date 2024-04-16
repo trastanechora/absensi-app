@@ -93,7 +93,15 @@ const AppProfilePage = () => {
                   Diperbolehkan Clock in/out di luar area:
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  {myProfile.isStrict ? 'Tidak' : 'Ya'}
+                  {myProfile.isStrictRadius ? 'Tidak' : 'Ya'}
+                </Typography>
+              </Box>
+              <Box sx={{ width: '100%', marginBottom: 2 }}>
+                <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+                  Diperbolehkan Clock tanpa durasi:
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  {myProfile.isStrictDuration ? 'Tidak' : 'Ya'}
                 </Typography>
               </Box>
             </AccordionDetails>

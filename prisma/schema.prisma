@@ -12,6 +12,7 @@ model Office {
   id        String     @id @default(uuid())
   name      String     @unique
   radius    Int
+  duration  Int
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   lat       String
@@ -21,18 +22,19 @@ model Office {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  name      String
-  status    String     @default("active")
-  email     String     @unique
-  officeId  String?
-  role      String?
-  password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  isStrict  Boolean    @default(true)
-  presences Presence[]
-  office    Office?    @relation(fields: [officeId], references: [id])
+  id               String     @id @default(uuid())
+  name             String
+  status           String     @default("active")
+  email            String     @unique
+  officeId         String?
+  role             String?
+  password         String
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  isStrictDuration Boolean    @default(true)
+  isStrictRadius   Boolean    @default(true)
+  presences        Presence[]
+  office           Office?    @relation(fields: [officeId], references: [id])
 }
 
 model Presence {

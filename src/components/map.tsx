@@ -55,17 +55,17 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 			preferCanvas={true}
 			center={coord}
 			zoom={17}
-			style={{ height: "300px", maxWidth: "430px" }}
+			style={{ height: "300px", maxWidth: "430px", width: '100%' }}
 		>
-		<TileLayer
-			attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-			url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-		/>
-		<Circle
-			center={officeCoordinates as LatLngExpression}
-			pathOptions={greenOptions}
-			radius={radius}
-		/>
+			<TileLayer
+				attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+			/>
+			<Circle
+				center={officeCoordinates as LatLngExpression}
+				pathOptions={greenOptions}
+				radius={radius}
+			/>
 			<Marker position={coord}>
 				<Popup>
 					Posisi anda saat ini, muat ulang halaman ini untuk memperbarui.

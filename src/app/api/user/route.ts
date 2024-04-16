@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 };
 
 export async function POST(req: NextRequest) {
-  const { name, role = 'staff', email, password = 'pas123!', officeId, isStrict } = await req.json();
+  const { name, role = 'staff', email, password = 'pas123!', officeId, isStrictRadius = true, isStrictDuration = true } = await req.json();
   const exists = await prisma.user.findUnique({
     where: {
       email,
@@ -59,13 +59,15 @@ export async function POST(req: NextRequest) {
       email: string;
       password: string;
       officeId?: string;
-      isStrict?: boolean;
+      isStrictRadius?: boolean;
+      isStrictDuration?: boolean;
     } = {
       name,
       role,
       email,
       password: await hash(password, 10),
-      isStrict
+      isStrictRadius,
+      isStrictDuration
     }
 
     if (officeId) payload.officeId = officeId;

@@ -13,8 +13,8 @@ import PlaceIcon from '@mui/icons-material/Place';
 import { convertDateToLocaleString } from '@/app/lib/date';
 
 export const initialFilterState = {
-  searchString: '',
-  searchType: '',
+  employee: '',
+  employeeType: 'user',
   dateStart: null,
   dateStartType: 'start',
   dateEnd: null,

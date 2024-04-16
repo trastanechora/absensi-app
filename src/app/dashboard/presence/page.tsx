@@ -6,7 +6,7 @@ import Head from 'next/head'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PrintIcon from '@mui/icons-material/Print';
 import { DataGrid } from '@mui/x-data-grid';
-import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
+import { Autocomplete, Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
@@ -16,14 +16,16 @@ import { TABLE_HEADER, FILTER_OBJECT, initialFilterState } from '@/entity/consta
 import { convertDateToExcelShortString } from '@/app/lib/date';
 import { convertDateToTime } from '@/app/lib/time';
 
-const EmployeePage = () => {
+const PresencePage = () => {
   const [data, setData] = useState<any[]>([]);
   const [officeOptions, setOfficeOptions] = useState<any[]>([]);
+  const [employeeOptions, setEmployeeOptions] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
+  const [search, setSearch] = useState('');
 
   const downloadCSV = useCallback(() => {
     const csvContent = "data:text/csv;charset=utf-8," +
@@ -41,6 +43,23 @@ const EmployeePage = () => {
     document.body.appendChild(link);
     link.click();
   }, [data]);
+
+  useEffect(() => {
+		if (!search) {
+			setEmployeeOptions([]);
+			return;
+    };
+
+		const delayDebounceFn = setTimeout(async () => {
+      fetch(`/api/user/list?name=${search}&page=1&limit=100`)
+        .then((res) => res.json())
+        .then((resObject) => {
+          setEmployeeOptions(resObject)
+        })
+		}, 1000);
+
+		return () => clearTimeout(delayDebounceFn);
+  }, [search, setEmployeeOptions])
 
   const router = useRouter()
 
@@ -81,8 +100,8 @@ const EmployeePage = () => {
     console.warn('[debug] values', values);
     setLoading(true)
     const filterArray = [];
-    if (values.searchString && values.searchType) {
-      filterArray.push(`${values.searchType}=${values.searchString}`);
+    if (values.employee && values.employee !== null) {
+      filterArray.push(`${values.employeeType}=${values.employee}`);
     }
 
     if (values.dateStart && values.dateStart !== null) {
@@ -147,50 +166,22 @@ const EmployeePage = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {/* <Typography variant="caption" display="block">
-                Isi kolom input &quot;Kata Kunci&quot; apa dan &quot;Berdasarkan Kolom&quot; mana yang ingin Anda tampilkan kemudian tekan &quot;Terapkan Filter&quot;.
-              </Typography>
-              <Container maxWidth={false} disableGutters sx={{ width: '100%', marginTop: 2 }}>
-                <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-                  <Box sx={{ width: '70%', paddingRight: 1 }}>
-                    <FormControl fullWidth>
-                      <TextField fullWidth id="search-keyword" label="Kata Kunci" variant="outlined" value={values.searchString} onChange={handleFilterChange('searchString')} />
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ width: '30%', paddingLeft: 1 }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="search-type-label">Berdasarkan Kolom</InputLabel>
-                      <Select
-                        labelId="search-type-label"
-                        id="search-type"
-                        label="Berdasarkan Kolom"
-                        value={values.searchType}
-                        onChange={handleFilterChange('searchType')}
-                        fullWidth
-                      >
-                        {FILTER_OBJECT.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Container>
-              </Container> */}
-              {/* <Typography variant="caption" display="block">
-                Atau pilih berdasarkan beberapa kolom yang memiliki nilai pasti berikut:
-              </Typography> */}
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
-                <Box sx={{ width: '50%' }}>
+                <Box sx={{ width: '50%', paddingRight: 1 }}>
                   <FormControl fullWidth>
-                    <InputLabel id="office-label">Kantor</InputLabel>
-                    <Select
-                      labelId="office-label"
-                      id="office"
-                      label="Kantor"
-                      value={values.office}
-                      onChange={handleFilterChange('office')}
-                      fullWidth
-                    >
-                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
-                    </Select>
+                     <Autocomplete
+                        disablePortal
+                        id="employee"
+                        options={employeeOptions}
+                        getOptionLabel={(option) => option.name}
+                        sx={{ width: '100%' }}
+                        noOptionsText="Tidak ada karyawan"
+                        onChange={(_, newInputValue) => {
+                          if (!newInputValue) return;
+                          handleFilterChange('employee')({ target: { value: newInputValue.id } })
+                        }}
+                        renderInput={(params) => <TextField {...params} label="Karyawan" onChange={e => setSearch(e.target.value)} />}
+                      />
                   </FormControl>
                 </Box>
                 <Box sx={{ width: '50%', paddingLeft: 1 }}>
@@ -271,4 +262,4 @@ const EmployeePage = () => {
   )
 }
 
-export default EmployeePage;
+export default PresencePage;

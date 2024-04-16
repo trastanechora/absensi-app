@@ -25,7 +25,7 @@ const Map = ({ officeCoordinates, radius, setCurrentPayload }: Props) => {
 
 	const errorFunction = useCallback(() => {
 		dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal memuat lokasi, pastikan Anda terhubung ke internet kemudian muat ulang halaman`, severity: 'error' } });
-	}, [])
+	}, [dispatch])
 
   useEffect(() => {
 		if (map) {

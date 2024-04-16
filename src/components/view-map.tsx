@@ -40,7 +40,7 @@ const InputMap = ({ coords, radius }: Props) => {
 				</Marker>
 			</>
 		)
-	}, []);
+	}, [coords, radius]);
 
 	useEffect(() => {
 		if (!search) {

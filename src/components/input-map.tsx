@@ -64,7 +64,7 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 				setCurrentPayload([position.lat, position.lng]);
 			},
 		}),
-		[mapRef.current],
+		[mapRef.current, setCurrentPayload],
 	);
 
 	// @ts-ignore
@@ -89,7 +89,7 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 		}, 1000);
 
 		return () => clearTimeout(delayDebounceFn);
-  }, [search])
+  }, [search, provider])
 
 	return (
 		<Container maxWidth={false} disableGutters sx={{ width: '100%', marginBottom: 3 }}>
@@ -146,4 +146,6 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
   );
 }
 
+CustomMapWithMarker.displayName = 'CustomMapWithMarker';
+InputMap.displayName = 'InputMap';
 export default InputMap;

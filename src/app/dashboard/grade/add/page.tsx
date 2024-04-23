@@ -10,19 +10,14 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useNotificationContext } from '@/context/notification';
 import styles from '@/styles/Dashboard.module.css';
 
-const InputMap = dynamic(() => import('@/components/input-map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={356} /> });
-
-const InsertPatientPage = () => {
+const InsertDepartementPage = () => {
   const [_, dispatch] = useNotificationContext();
   const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(false)
 
   const [values, setValues] = useState({
     name: '',
-    radius: 0,
-    duration: 0,
-    lat: 0,
-    long: 0,
+    level: 0,
   });
 
   const handleInputChange = (prop: string, type: string) => (event: any) => {
@@ -30,28 +25,24 @@ const InsertPatientPage = () => {
     setValues({ ...values, [prop]: newValue });
   };
 
-  const handleOnLocationChange = (newValue: number[]) => {
-    setValues(prev => ({ ...prev, lat: newValue[0], long: newValue[1] }));
-  }
-
   const handleSubmit = () => {
-    const body = { ...values, duration: values.duration * 60 * 60 * 1000 };
+    const body = { ...values };
     setLoading(true)
-    fetch('/api/office', { method: 'POST', body: JSON.stringify(body) })
+    fetch('/api/grade', { method: 'POST', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((responseObject) => {
         if (responseObject.error) {
-          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan lokasi, error: ${responseObject.error}`, severity: 'error' } });
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan jabatan, error: ${responseObject.error}`, severity: 'error' } });
           setLoading(false);
           return;
         }
 
-        router.replace('/dashboard/office');
+        router.replace('/dashboard/grade');
         console.log('SUCCESS!', responseObject);
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan lokasi ${values.name}`, severity: 'success' } });
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menambahkan jabatan ${values.name}`, severity: 'success' } });
         setLoading(false);
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan lokasi, error: ${err}`, severity: 'error' } });
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal menambahkan jabatan, error: ${err}`, severity: 'error' } });
         setLoading(false);
       })
   }
@@ -61,7 +52,7 @@ const InsertPatientPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Tambah Lokasi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Tambah Jabatan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -70,17 +61,17 @@ const InsertPatientPage = () => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Tambahkan Lokasi
+            Tambahkan Jabatan
           </Typography>
         </Box>
 
         <Container maxWidth={false} disableGutters sx={{ width: '100%', marginTop: 2 }}>
           <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '70%', paddingRight: 1 }}>
               <FormControl fullWidth>
                 <TextField
                   id="name-input"
-                  label="Nama Lokasi"
+                  label="Nama Jabatan"
                   name="name"
                   value={values.name}
                   onChange={handleInputChange('name', 'string')}
@@ -91,52 +82,23 @@ const InsertPatientPage = () => {
                 />
               </FormControl>
             </Box>
+            <Box sx={{ width: '30%', paddingLeft: 1 }}>
+              <FormControl fullWidth>
+                <TextField
+                  id="name-input"
+                  label="Tingkatan"
+                  name="level"
+                  type='number'
+                  value={values.level}
+                  onChange={handleInputChange('level', 'number')}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled={isLoading}
+                />
+              </FormControl>
+            </Box>
 					</Container>
-
-          <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <Box sx={{ width: '50%', marginRight: 1 }}>
-              <FormControl fullWidth>
-                <TextField
-                  id="radius-input"
-                  label="Radius (dalam meter)"
-                  name="radius"
-                  type='number'
-                  value={values.radius}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">m</InputAdornment>
-                  }}
-                  onChange={handleInputChange('radius', 'number')}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  disabled={isLoading}
-                />
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '50%', marginLeft: 1 }}>
-              <FormControl fullWidth>
-                <TextField
-                  id="duration-input"
-                  label="Durasi (dalam jam)"
-                  name="duration"
-                  type='number'
-                  value={values.duration}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">jam</InputAdornment>
-                  }}
-                  onChange={handleInputChange('duration', 'number')}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  disabled={isLoading}
-                />
-              </FormControl>
-            </Box>
-          </Container>
-
-          <Container disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-            <InputMap setCurrentPayload={handleOnLocationChange} coords={[-6.175195012186339, 106.8272447777918]} />
-          </Container>
         
           <Divider sx={{ marginBottom: 3 }} />
 
@@ -151,5 +113,5 @@ const InsertPatientPage = () => {
   )
 }
 
-InsertPatientPage.isRequireAuth = true;
-export default InsertPatientPage;
+InsertDepartementPage.isRequireAuth = true;
+export default InsertDepartementPage;

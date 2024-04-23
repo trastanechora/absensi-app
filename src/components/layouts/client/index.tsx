@@ -51,7 +51,7 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
       </AppBar>
       ) : null}
       {children}
-      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3} style={{ maxWidth:430, margin: 'auto' }}>
+      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3} style={{ maxWidth:430, margin: 'auto', zIndex: 100 }}>
         <BottomNavigation
           showLabels
           value={currentPath}

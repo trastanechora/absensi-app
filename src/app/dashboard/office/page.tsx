@@ -1,22 +1,44 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import Head from 'next/head'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DataGrid } from '@mui/x-data-grid';
-import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  Container,
+  Box,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
 
 import styles from '@/styles/Dashboard.module.css'
 import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/office';
+import { useNotificationContext } from '@/context/notification';
 
 const EmployeePage = () => {
+  const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const router = useRouter()
 
@@ -72,10 +94,32 @@ const EmployeePage = () => {
     } else if (type === 'edit') {
       router.push(`/dashboard/office/${rowData.row.id}/edit`);
     } else {
-      // TODO: add delete mechanism
-      console.warn('delete', rowData);
+      setSelectedRow(rowData);
+      setDeleteDialogOpen(true);
     }
   }
+
+  const handleOnDelete = useCallback(() => {
+    if (selectedRow !== null) {
+      // @ts-ignore
+      fetch(`/api/office/${selectedRow.id}`, { method: 'DELETE' })
+        .then((res) => res.json())
+        .then(() => {
+          setDeleteDialogOpen(false);
+          // @ts-ignore
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menghapus lokasi dengan nama ${selectedRow?.row?.name}`, severity: 'success' } });
+          setSelectedRow(null);
+
+          setLoading(true);
+          fetch(`/api/office?page=${page || 1}&limit=${rowPerPage}`)
+            .then((res) => res.json())
+            .then((resObject) => {
+              setData(resObject)
+              setLoading(false);
+            })
+        })
+    }
+  }, [selectedRow, page, rowPerPage, dispatch]);
 
   return (
     <div className={styles.container}>
@@ -177,6 +221,28 @@ const EmployeePage = () => {
             onPageSizeChange={setRowPerPage}
           />
         </Box>
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Apakah Anda yakin?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {/* @ts-ignore */}
+              Data akan hilang dan tidak dapat dikembalikan setelah dihapus. Lokasi dengan nama <i style={{ fontWeight: 800 }}>{selectedRow?.row?.name}</i> akan dihapus?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Tidak</Button>
+            <Button onClick={handleOnDelete} autoFocus>
+              Ya
+            </Button>
+          </DialogActions>
+        </Dialog>
       </main>
     </div>
   )

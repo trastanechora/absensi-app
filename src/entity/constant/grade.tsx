@@ -5,32 +5,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export const initialFilterState = {
-  searchString: '',
-  searchType: '',
-  status: '',
-  statusType: 'f_status',
-  office: '',
-  officeType: 'f_office'
+  name: '',
+  nameType: 'name',
 };
 
-export const statusList = [
-  {
-    text: 'Aktif',
-    value: 'active'
-  },
-  {
-    text: 'Tidak Aktif',
-    value: 'inactive'
-  }
-];
-
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
-  { field: "name", headerName: "Nama Lokasi", width: 300, sortable: false },
-  { field: "radius", headerName: "Radius", width: 250, sortable: false },
-  {
-    field: "duration", headerName: "Durasi", width: 250, sortable: false,
-    renderCell: (params: any) => `${params.value / 60 / 60 / 1000} Jam`
-  },
+  { field: "name", headerName: "Nama Jabatan", width: 300, sortable: false },
+  { field: "level", headerName: "Tingkatan", width: 250, sortable: false },
   {
     field: 'action',
     headerName: 'Tindakan',
@@ -43,8 +24,4 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
         <Button onClick={() => callbackFunction('delete', params)} sx={{ textTransform: 'none' }} startIcon={<DeleteForeverIcon />}>Hapus</Button>
       </ButtonGroup>
   }
-];
-
-export const FILTER_OBJECT = [
-  { text: "Nama Lokasi", value: "f_name"},
 ];

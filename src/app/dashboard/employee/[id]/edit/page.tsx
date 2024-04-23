@@ -2,15 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Divider, Container, TextField, FormControl, Button, InputLabel, Select, MenuItem } from '@mui/material';
+import { Typography, Box, Divider, Container, TextField, FormControl, Button, InputLabel, Select, MenuItem, Autocomplete } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useNotificationContext } from '@/context/notification';
 import styles from '@/styles/Dashboard.module.css';
-
-import type { Dayjs } from 'dayjs';
 
 const AddEmployeePage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
@@ -18,6 +15,9 @@ const AddEmployeePage = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [officeOptions, setOfficeOptions] = useState<any[]>([]);
+  const [gradeOptions, setGradeOptions] = useState<any[]>([]);
+  const [divisionOptions, setDivisionOptions] = useState<any[]>([]);
+  const [defaultDivisionOptions, setDefaultDivisionOptions] = useState<any[]>([]);
 
   const [values, setValues] = useState({
     name: '',
@@ -25,6 +25,8 @@ const AddEmployeePage = ({ params }: { params: { id: string } }) => {
     officeId: '',
     isStrictRadius: true,
     isStrictDuration: true,
+    gradeId: '',
+    divisionIds: [],
   });
 
   const handleInputChange = (prop: string) => (event: any) => {
@@ -40,15 +42,29 @@ const AddEmployeePage = ({ params }: { params: { id: string } }) => {
             .then((res) => res.json())
             .then((resObject) => {
               setOfficeOptions(resObject)
-              setLoading(false)
             })
+          fetch(`/api/grade/list?page=1&limit=1000`)
+            .then((res) => res.json())
+            .then((resObject) => {
+              setGradeOptions(resObject)
+            })
+          fetch(`/api/division/list?page=1&limit=1000`)
+            .then((res) => res.json())
+            .then((resObject) => {
+              setDivisionOptions(resObject)
+            })
+
           setValues({
             name: responseObject.name,
             email: responseObject.email,
             officeId: responseObject.officeId,
             isStrictRadius: responseObject.isStrictRadius,
             isStrictDuration: responseObject.isStrictDuration,
+            gradeId: responseObject.gradeId,
+            divisionIds: responseObject.divisions.map((division: { id: string }) => division.id),
           });
+          setDefaultDivisionOptions(responseObject.divisions);
+          setLoading(false);
         })
     }
   }, [id]);
@@ -56,6 +72,7 @@ const AddEmployeePage = ({ params }: { params: { id: string } }) => {
   const handleSubmit = () => {
     setLoading(true)
     const body = values;
+    console.warn('[DEBUG] body', body);
     fetch(`/api/user/${id}`, { method: 'PUT', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((_) => {
@@ -171,6 +188,53 @@ const AddEmployeePage = ({ params }: { params: { id: string } }) => {
                 >
                   {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
                 </Select>
+              </FormControl>
+            </Box>
+          </Container>
+          <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
+            <Box sx={{
+              width: '50%',
+              paddingRight: 1
+            }}>
+              <FormControl fullWidth>
+                <InputLabel id="office-label">Titel / Pangkat</InputLabel>
+                <Select
+                  labelId="grade-label"
+                  id="grade"
+                  label="Titel / Pangkat"
+                  value={values.gradeId}
+                  onChange={handleInputChange('gradeId')}
+                  fullWidth
+                >
+                  {gradeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{
+              width: '50%',
+              paddingLeft: 1
+            }}>
+              <FormControl fullWidth>
+                <Autocomplete
+                  disablePortal
+                  multiple
+                  noOptionsText="Tidak ada Departemen"
+                  id="divisions-label"
+                  options={divisionOptions}
+                  getOptionLabel={(option) => option.name}
+                  filterSelectedOptions
+                  defaultValue={defaultDivisionOptions}
+                  onChange={(_, newInputValue) => {
+                    if (!newInputValue) return;
+                    handleInputChange('divisionIds')({ target: { value: newInputValue.map(val => val.id) } })
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Departemen"
+                    />
+                  )}
+                />
               </FormControl>
             </Box>
           </Container>

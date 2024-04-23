@@ -98,7 +98,7 @@ const AppProfilePage = () => {
               </Box>
               <Box sx={{ width: '100%', marginBottom: 2 }}>
                 <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-                  Diperbolehkan Clock tanpa durasi:
+                  Diperbolehkan Clock in/out tanpa durasi:
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                   {myProfile.isStrictDuration ? 'Tidak' : 'Ya'}

@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 };
 
 export async function POST(req: NextRequest) {
-  const { name, role = 'staff', email, password = 'pas123!', officeId, isStrictRadius = true, isStrictDuration = true } = await req.json();
+  const { name, role = 'staff', email, password = 'pas123!', officeId, isStrictRadius = true, isStrictDuration = true, gradeId, divisionIds } = await req.json();
   if (!name) return NextResponse.json({ error: "Nama tidak boleh kosong" }, { status: 400 });
   if (!email) return NextResponse.json({ error: "Email tidak boleh kosong" }, { status: 400 });
 
@@ -64,6 +64,12 @@ export async function POST(req: NextRequest) {
       officeId?: string;
       isStrictRadius?: boolean;
       isStrictDuration?: boolean;
+      gradeId?: string;
+      divisions?: {
+        connect: {
+          id: string;
+        }[];
+      };
     } = {
       name,
       role,
@@ -74,6 +80,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (officeId) payload.officeId = officeId;
+    if (gradeId) payload.gradeId = gradeId;
+    if (divisionIds) payload.divisions = {
+      connect: divisionIds.map((divisionId: string) => ({ id: divisionId }))
+    };
 
     const user = await prisma.user.create({
       data: payload,

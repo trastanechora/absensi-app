@@ -33,8 +33,13 @@ model User {
   updatedAt        DateTime   @updatedAt
   isStrictDuration Boolean    @default(true)
   isStrictRadius   Boolean    @default(true)
+  gradeId          String?
+  approvals        Approval[]
+  leaves           Leave[]
   presences        Presence[]
+  grade            Grade?     @relation(fields: [gradeId], references: [id])
   office           Office?    @relation(fields: [officeId], references: [id])
+  divisions        Division[] @relation("DivisionToUser")
 }
 
 model Presence {
@@ -55,5 +60,47 @@ model Presence {
   clockInPhoto     String?
   clockOutPhoto    String?
   office           Office    @relation(fields: [officeId], references: [id])
-  user             User      @relation(fields: [userId], references: [id])
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Division {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]   @relation("DivisionToUser")
+}
+
+model Grade {
+  id        String   @id @default(uuid())
+  name      String
+  level     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model Leave {
+  id        String     @id @default(uuid())
+  userId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  dateEnt   DateTime
+  dateStart DateTime
+  dayCount  Int
+  status    String
+  approvals Approval[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Approval {
+  id        String   @id @default(uuid())
+  type      String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  leaveId   String
+  userId    String
+  leave     Leave    @relation(fields: [leaveId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

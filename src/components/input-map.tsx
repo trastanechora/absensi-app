@@ -74,10 +74,11 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 	}
 
 	useEffect(() => {
-		if (!search) {
+		if (!search && placeOptions.length !== 0) {
 			setPlaceOptions([]);
 			return;
 		};
+
 		const delayDebounceFn = setTimeout(async () => {
 			const results = await provider.search({ query: search });
 			const normalizedResults = results.map(result => ({
@@ -103,7 +104,7 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 						onChange={(_, newValue: { label: string, value: number[] }) => {
 							if (newValue == null) return;
 							// @ts-ignore
-							setCoord(newValue.value);
+							// setCoord(newValue.value);
 							// @ts-ignore
 							mapRef.current?.setView(newValue.value);
 							setCurrentPayload(newValue.value);

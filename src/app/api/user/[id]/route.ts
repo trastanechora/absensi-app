@@ -5,7 +5,7 @@ import { hash } from "bcrypt";
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   
-  const user = await prisma.user.findFirst({ where: { id }, include: { office: true } });
+  const user = await prisma.user.findFirst({ where: { id }, include: { office: true, divisions: true } });
 	return NextResponse.json(user);
 };
 
@@ -16,9 +16,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     where: {
       id,
     },
+    include: {
+      divisions: true
+    }
   });
   if (user) {
-    const { name, role, email, password, officeId, isStrictRadius, isStrictDuration } = await req.json();
+    const { name, role, email, password, officeId, isStrictRadius, isStrictDuration, gradeId, divisionIds } = await req.json();
     const payload: {
       name?: string;
       role?: string;
@@ -27,6 +30,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       officeId?: string;
       isStrictRadius?: boolean;
       isStrictDuration?: boolean;
+      gradeId?: string;
+      divisions?: {
+        disconnect: {
+          id: string;
+        }[];
+        connect: {
+          id: string;
+        }[];
+      };
     } = {
       isStrictRadius,
       isStrictDuration
@@ -37,12 +49,17 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     if (email) payload.email = email;
     if (officeId) payload.officeId = officeId;
     if (password) payload.password = await hash(password, 10);
+    if (gradeId) payload.gradeId = gradeId;
+    if (divisionIds) payload.divisions = {
+      disconnect: user.divisions,
+      connect: divisionIds.map((divisionId: string) => ({ id: divisionId }))
+    };
 
     const updatedUser = await prisma.user.update({
       where: {
         id,
       },
-      data: payload,
+      data: payload
     })
 
     return NextResponse.json(updatedUser);
@@ -67,13 +84,19 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       },
     })
 
+    const deleteLeave = prisma.leave.deleteMany({
+      where: {
+        userId: user.id,
+      },
+    })
+
     const deleteUser = prisma.user.delete({
       where: {
         id: user.id,
       },
     })
 
-    const transaction = await prisma.$transaction([deletePresences, deleteUser]);
+    const transaction = await prisma.$transaction([deletePresences, deleteLeave, deleteUser]);
     return NextResponse.json(transaction);
   } else {
     return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });

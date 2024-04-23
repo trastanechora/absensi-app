@@ -8,42 +8,35 @@ export async function GET(req: NextRequest) {
   const page = req.nextUrl.searchParams.get('page');
   const limit = req.nextUrl.searchParams.get('limit');
 
-  const offices = await prisma.office.findMany({
+  const grades = await prisma.grade.findMany({
     skip: (Number(page) - 1) * Number(limit),
     take: Number(limit),
     orderBy: {
-      createdAt: 'desc'
+      level: 'desc'
     },
     where: {
       ...(filterName && { name: { contains: filterName, mode: 'insensitive' }}),
     }
   });
 
-  return NextResponse.json(offices);
+  return NextResponse.json(grades);
 }
 
 export async function POST(req: Request) {
-  const { name, radius = 200, duration = 5 * 60 * 60 * 1000, lat, long } = await req.json();
+  const { name, level } = await req.json();
   if (!name) {
     return NextResponse.json({ error: "Nama tidak boleh kosong" }, { status: 400 });
   }
-  const exists = await prisma.office.findUnique({
-    where: {
-      name,
-    },
-  });
-  if (exists) {
-    return NextResponse.json({ error: "Lokasi dengan nama ini sudah ada" }, { status: 400 });
-  } else {
-    const user = await prisma.office.create({
+
+  if (!level) {
+    return NextResponse.json({ error: "Level tidak boleh kosong" }, { status: 400 });
+  }
+
+  const user = await prisma.grade.create({
       data: {
         name,
-        radius,
-        duration,
-        lat: String(lat),
-        long: (String(long))
+        level,
       },
     });
     return NextResponse.json(user);
-  }
 };

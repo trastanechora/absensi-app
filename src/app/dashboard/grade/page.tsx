@@ -7,17 +7,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   Accordion,
+  Button,
   AccordionSummary,
   AccordionDetails,
   Typography,
   Container,
   Box,
   TextField,
-  Select,
-  MenuItem,
-  InputLabel,
   FormControl,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,13 +23,12 @@ import {
 } from '@mui/material';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/employee';
+import { TABLE_HEADER, initialFilterState } from '@/entity/constant/grade';
 import { useNotificationContext } from '@/context/notification';
 
-const EmployeePage = () => {
+const GradePage = () => {
   const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
-  const [officeOptions, setOfficeOptions] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
@@ -46,17 +42,11 @@ const EmployeePage = () => {
   useEffect(() => {
     if (page === 0) return;
     setLoading(true)
-    fetch(`/api/user?page=${page}&limit=${rowPerPage}`)
+    fetch(`/api/grade?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
         setData(resObject)
         setLoading(false)
-      })
-    
-    fetch(`/api/office/list?page=1&limit=1000`)
-      .then((res) => res.json())
-      .then((resObject) => {
-        setOfficeOptions(resObject)
       })
   }, [page, rowPerPage])
 
@@ -79,18 +69,12 @@ const EmployeePage = () => {
   const handleApplyFilter = () => {
     setLoading(true)
     const filterArray = [];
-    if (values.searchString && values.searchType) {
-      filterArray.push(`${values.searchType}=${values.searchString}`);
-    }
-    if (values.office) {
-      filterArray.push(`${values.officeType}=${values.office}`);
-    }
-    if (values.status) {
-      filterArray.push(`${values.statusType}=${values.status}`);
+    if (values.name && values.nameType) {
+      filterArray.push(`${values.nameType}=${values.name}`);
     }
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/user?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/grade?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
         setData(resObject);
@@ -100,9 +84,9 @@ const EmployeePage = () => {
 
   const handleTriggerAction = (type: string, rowData: any) => {
     if (type === 'view') {
-      router.push(`/dashboard/employee/${rowData.row.id}`);
+      router.push(`/dashboard/grade/${rowData.row.id}`);
     } else if (type === 'edit') {
-      router.push(`/dashboard/employee/${rowData.row.id}/edit`);
+      router.push(`/dashboard/grade/${rowData.row.id}/edit`);
     } else {
       setSelectedRow(rowData);
       setDeleteDialogOpen(true);
@@ -112,16 +96,16 @@ const EmployeePage = () => {
   const handleOnDelete = useCallback(() => {
     if (selectedRow !== null) {
       // @ts-ignore
-      fetch(`/api/user/${selectedRow.id}`, { method: 'DELETE' })
+      fetch(`/api/grade/${selectedRow.id}`, { method: 'DELETE' })
         .then((res) => res.json())
         .then(() => {
           setDeleteDialogOpen(false);
           // @ts-ignore
-          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menghapus karyawan dengan nama ${selectedRow?.row?.name}`, severity: 'success' } });
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menghapus jabatan dengan nama ${selectedRow?.row?.name}`, severity: 'success' } });
           setSelectedRow(null);
 
           setLoading(true);
-          fetch(`/api/user?page=${page || 1}&limit=${rowPerPage}`)
+          fetch(`/api/grade?page=${page || 1}&limit=${rowPerPage}`)
             .then((res) => res.json())
             .then((resObject) => {
               setData(resObject)
@@ -134,7 +118,7 @@ const EmployeePage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>List Karyawan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>List Jabatan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -143,11 +127,11 @@ const EmployeePage = () => {
         <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
           <Box sx={{ width: '70%', paddingRight: 1 }}>
             <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-              List Karyawan
+              List Jabatan
             </Typography>
           </Box>
           <Box sx={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignSelf: 'center' }}>
-            <Button variant="contained" onClick={() => router.push('/dashboard/employee/add')} disabled={isLoading} sx={{ textTransform: 'none' }}>Tambahkan Karyawan</Button>
+            <Button variant="contained" onClick={() => router.push('/dashboard/grade/add')} disabled={isLoading} sx={{ textTransform: 'none' }}>Tambahkan Jabatan</Button>
           </Box>
         </Container>
         <div className={styles.filterContainer}>
@@ -162,67 +146,14 @@ const EmployeePage = () => {
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography variant="caption" display="block">
-                Isi kolom input &quot;Kata Kunci&quot; apa dan &quot;Berdasarkan Kolom&quot; mana yang ingin Anda tampilkan kemudian tekan &quot;Terapkan Filter&quot;.
-              </Typography>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', marginTop: 2 }}>
                 <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-                  <Box sx={{ width: '70%', paddingRight: 1 }}>
+                  <Box sx={{ width: '100%' }}>
                     <FormControl fullWidth>
-                      <TextField fullWidth id="search-keyword" label="Kata Kunci" variant="outlined" value={values.searchString} onChange={handleFilterChange('searchString')} />
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ width: '30%', paddingLeft: 1 }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="search-type-label">Berdasarkan Kolom</InputLabel>
-                      <Select
-                        labelId="search-type-label"
-                        id="search-type"
-                        label="Berdasarkan Kolom"
-                        value={values.searchType}
-                        onChange={handleFilterChange('searchType')}
-                        fullWidth
-                      >
-                        {FILTER_OBJECT.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
-                      </Select>
+                      <TextField fullWidth id="search-keyword" label="Nama Jabatan" variant="outlined" value={values.name} onChange={handleFilterChange('name')} />
                     </FormControl>
                   </Box>
                 </Container>
-              </Container>
-              <Typography variant="caption" display="block">
-                Atau pilih berdasarkan beberapa kolom yang memiliki nilai pasti berikut:
-              </Typography>
-              <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
-                <Box sx={{ width: '50%', paddingRight: 1 }}>
-                  <FormControl fullWidth>
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                      labelId="status-label"
-                      id="status"
-                      label="Status"
-                      value={values.status}
-                      onChange={handleFilterChange('status')}
-                      fullWidth
-                    >
-                      {statusList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
-                    </Select>
-                  </FormControl>
-                </Box>
-                <Box sx={{ width: '50%', paddingLeft: 1 }}>
-                  <FormControl fullWidth>
-                    <InputLabel id="office-label">Kantor</InputLabel>
-                    <Select
-                      labelId="office-label"
-                      id="office"
-                      label="Kantor"
-                      value={values.office}
-                      onChange={handleFilterChange('office')}
-                      fullWidth
-                    >
-                      {officeOptions.map((option, index) => (<MenuItem key={index} value={option.id}>{option.name}</MenuItem>))}
-                    </Select>
-                  </FormControl>
-                </Box>
               </Container>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
                 <Button variant="outlined" onClick={handleResetFilter} disabled={isLoading} sx={{ width: '30%', textTransform: 'none', marginRight: 1 }}>Reset Filter</Button>
@@ -258,7 +189,7 @@ const EmployeePage = () => {
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {/* @ts-ignore */}
-              Data akan hilang dan tidak dapat dikembalikan setelah dihapus. Karyawan dengan nama <i style={{ fontWeight: 800 }}>{selectedRow?.row?.name}</i> akan dihapus?
+              Data akan hilang dan tidak dapat dikembalikan setelah dihapus. Jabatan dengan nama <i style={{ fontWeight: 800 }}>{selectedRow?.row?.name}</i> akan dihapus?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -273,4 +204,4 @@ const EmployeePage = () => {
   )
 }
 
-export default EmployeePage;
+export default GradePage;

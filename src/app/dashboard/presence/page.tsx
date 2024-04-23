@@ -201,9 +201,9 @@ const PresencePage = () => {
                 </Box>
               </Container>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
-                <FormControl fullWidth>
-                  <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
-                    <Box sx={{ width: '100%', paddingRight: 1 }}>
+                <Box sx={{ width: '100%', display: 'flex', maxWidth: 'none' }}>
+                  <Box sx={{ width: '100%', paddingRight: 1 }}>
+                    <FormControl fullWidth>
                       <DatePicker
                         label={'Tanggal Awal'}
                         value={values.dateStart}
@@ -217,8 +217,10 @@ const PresencePage = () => {
                           },
                         }}
                       />
-                    </Box>
-                    <Box sx={{ width: '100%', paddingLeft: 1 }}>
+                    </FormControl>
+                  </Box>
+                  <Box sx={{ width: '100%', paddingLeft: 1 }}>
+                    <FormControl fullWidth>
                       <DatePicker
                         label={'Tanggal Akhir'}
                         minDate={dayjs(values.dateStart)}
@@ -230,10 +232,10 @@ const PresencePage = () => {
                             style: { width: '100%' }
                           },
                         }}
-                      />
-                    </Box>
-                  </Container>
-                </FormControl>
+                        />
+                    </FormControl>
+                  </Box>
+                </Box>
               </Container>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
                 <Button variant="outlined" onClick={handleResetFilter} disabled={isLoading} sx={{ width: '30%', textTransform: 'none', marginRight: 1 }}>Reset Filter</Button>

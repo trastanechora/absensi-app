@@ -3,13 +3,13 @@ import prisma from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const filterName = req.nextUrl.searchParams.get('f_name');
+  const filterName = req.nextUrl.searchParams.get('name');
 
   const page = req.nextUrl.searchParams.get('page');
   const limit = req.nextUrl.searchParams.get('limit');
 
   const offices = await prisma.office.findMany({
-    skip: (Number(page) - 1) * Number(limit),
+    skip: Number(page) * Number(limit),
     take: Number(limit),
     orderBy: {
       createdAt: 'desc'
@@ -19,7 +19,13 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  return NextResponse.json(offices);
+  const count = await prisma.office.count({
+    where: {
+      ...(filterName && { name: { contains: filterName, mode: 'insensitive' }}),
+    }
+  })
+
+  return NextResponse.json({ data: offices, total: count });
 }
 
 export async function POST(req: Request) {

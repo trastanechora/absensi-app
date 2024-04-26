@@ -17,11 +17,11 @@ export async function GET(req: NextRequest) {
   const filterStatus = req.nextUrl.searchParams.get('status');
   const filterOffice = req.nextUrl.searchParams.get('office');
 
-  const page = req.nextUrl.searchParams.get('page') || 1;
-  const limit = req.nextUrl.searchParams.get('limit') || 10;
+  const page = req.nextUrl.searchParams.get('page');
+  const limit = req.nextUrl.searchParams.get('limit');
 
   const users = await prisma.user.findMany({
-    skip: (Number(page) - 1) * Number(limit),
+    skip: Number(page) * Number(limit),
     take: Number(limit),
     orderBy: {
       createdAt: 'desc'
@@ -40,7 +40,20 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  return NextResponse.json(users);
+  const count = await prisma.user.count({
+    where: {
+      role: {
+        not: 'admin'
+      },
+      ...(filterName && { name: { contains: filterName, mode: 'insensitive' }}),
+      ...(filterEmail && { email: { contains: filterEmail, mode: 'insensitive' }}),
+      ...(filterStatus && { status: filterStatus}),
+      ...(filterOffice && { officeId: filterOffice}),
+    },
+  })
+
+  console.log('[DEBUG] total', count);
+  return NextResponse.json({ data: users, total: count });
 };
 
 export async function POST(req: NextRequest) {

@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
 
   const grades = await prisma.grade.findMany({
     orderBy: {
-      name: 'asc'
+      level: 'desc'
     },
     skip: (Number(page) - 1) * Number(limit),
     take: Number(limit),

@@ -28,7 +28,7 @@ export const initialFilterState = {
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
   { field: "name", headerName: "Nama Karyawan", width: 300, sortable: false },
   {
-    field: "office", headerName: "Kantor", width: 250, sortable: false,
+    field: "office", headerName: "Lokasi", width: 250, sortable: false,
     renderCell: (params: any) => {
       if (params.value === null) return '-'
       
@@ -54,13 +54,13 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
       return "Diperbolehkan"
     }
   },
-  {
-    field: "status", headerName: "Status Akun", width: 200, sortable: false,
-    renderCell: (params: any) => {
-      if (params.value === 'active') return "Aktif"
-      return "Ditangguhkan"
-    }
-  },
+  // {
+  //   field: "status", headerName: "Status Akun", width: 200, sortable: false,
+  //   renderCell: (params: any) => {
+  //     if (params.value === 'active') return "Aktif"
+  //     return "Ditangguhkan"
+  //   }
+  // },
   // { field: "address", headerName: "Alamat", width: 200, sortable: false },
   {
     field: 'action',

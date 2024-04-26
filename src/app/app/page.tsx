@@ -35,6 +35,10 @@ const AppHomePage = () => {
   }, []);
 
   const handleDialogCameraOpen = useCallback((type: string) => {
+    if (myProfile.officeId === null) {
+      dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Data lokasi Anda tidak tersedia, mohon untuk melapor ke admin`, severity: 'error' } });
+      return;
+    }
     if (myProfile.isStrictRadius) {
       if (myProfile.office.radius < mapPayloadRef.current.distance) {
         dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Tidak dapat Clock In, pastikan Anda berada dalam radius lokasi`, severity: 'error' } });
@@ -137,6 +141,8 @@ const AppHomePage = () => {
   useEffect(() => {
     if (!myProfile.id) {
       myProfile.refetch();
+    } else {
+      localStorage.setItem('uuid', myProfile.id);
     }
   }, [myProfile]);
 
@@ -181,7 +187,7 @@ const AppHomePage = () => {
               <Container disableGutters sx={{ width: '100%', display: 'flex' }}>
                 <Box sx={{ width: '100%', textAlign: 'center' }}>
                   {(!myProfile.presences[0]?.clockInDate && !myProfile.presences[0]?.clockOutDate) && (
-                    <Button disabled={isLoading} variant="contained" size="large" endIcon={<AlarmIcon />} fullWidth  sx={{ height: '100px' }}onClick={() => handleDialogCameraOpen('in')}>
+                    <Button disabled={isLoading} variant="contained" size="large" endIcon={<AlarmIcon />} fullWidth  sx={{ height: '100px' }} onClick={() => handleDialogCameraOpen('in')}>
                       Clock In
                     </Button>
                   )}

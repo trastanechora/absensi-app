@@ -6,11 +6,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export const initialFilterState = {
   searchString: '',
-  searchType: '',
-  status: '',
-  statusType: 'f_status',
-  office: '',
-  officeType: 'f_office'
+  searchType: 'name',
 };
 
 export const statusList = [
@@ -46,5 +42,5 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
 ];
 
 export const FILTER_OBJECT = [
-  { text: "Nama Lokasi", value: "f_name"},
+  { text: "Nama Lokasi", value: "name"},
 ];

@@ -29,9 +29,10 @@ import { useNotificationContext } from '@/context/notification';
 const GradePage = () => {
   const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
+  const [count, setCount] = useState(0);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -45,8 +46,9 @@ const GradePage = () => {
     fetch(`/api/grade?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject)
-        setLoading(false)
+        setData(resObject.data);
+        setCount(resObject.total);
+        setLoading(false);
       })
   }, [page, rowPerPage])
 
@@ -74,10 +76,11 @@ const GradePage = () => {
     }
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/grade?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/grade?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject);
+        setData(resObject.data);
+        setCount(resObject.total);
         setLoading(false);
       })
   }
@@ -105,10 +108,11 @@ const GradePage = () => {
           setSelectedRow(null);
 
           setLoading(true);
-          fetch(`/api/grade?page=${page || 1}&limit=${rowPerPage}`)
+          fetch(`/api/grade?page=${page}&limit=${rowPerPage}`)
             .then((res) => res.json())
             .then((resObject) => {
-              setData(resObject)
+              setData(resObject.data);
+              setCount(resObject.total);
               setLoading(false);
             })
         })
@@ -165,6 +169,7 @@ const GradePage = () => {
         <Box style={{ height: 700, width: '100%' }}>
           <DataGrid
             rows={data}
+            rowCount={count}
             columns={TABLE_HEADER(handleTriggerAction)}
             disableSelectionOnClick
             disableColumnMenu
@@ -172,6 +177,7 @@ const GradePage = () => {
             pagination
             page={page}
             pageSize={rowPerPage}
+            paginationMode="server"
             rowsPerPageOptions={[10, 20, 50]}
             onPageChange={setPage}
             onPageSizeChange={setRowPerPage}

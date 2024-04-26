@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (presences.length > 0) {
-      return NextResponse.json({ status: "fail", error: "You are already clocked in" }, { status: 400 });
+      return NextResponse.json({ error: "You are already clocked in" }, { status: 400 });
     } else {
       const user = await prisma.presence.create({
         data: payload,
@@ -78,6 +78,6 @@ export async function POST(req: NextRequest) {
 
   }
   catch (e) {
-    return  NextResponse.json({ status: "fail", data: e })
+    throw new Error(`Gagal clock-in. Mohon laporkan ke admin`);
   }
 };

@@ -54,9 +54,9 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
   {
     field: "office", headerName: "Nama Lokasi", width: 300, sortable: false,
     renderCell: (params: any) => (
-      <Button variant="text" startIcon={<PlaceIcon />}>
-        {params.row.office.name}
-      </Button>
+      params.row.office ? <Button variant="text" startIcon={<PlaceIcon />}>
+        {params.row.office?.name}
+      </Button> : <>- Lokasi telah dihapus -</>
     )
   },
   {

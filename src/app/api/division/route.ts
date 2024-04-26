@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const limit = req.nextUrl.searchParams.get('limit');
 
   const divisions = await prisma.division.findMany({
-    skip: (Number(page) - 1) * Number(limit),
+    skip: Number(page) * Number(limit),
     take: Number(limit),
     orderBy: {
       createdAt: 'desc'
@@ -19,7 +19,13 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  return NextResponse.json(divisions);
+  const count = await prisma.division.count({
+    where: {
+      ...(filterName && { name: { contains: filterName, mode: 'insensitive' }}),
+    }
+  })
+
+  return NextResponse.json({ data: divisions, total: count});
 }
 
 export async function POST(req: Request) {

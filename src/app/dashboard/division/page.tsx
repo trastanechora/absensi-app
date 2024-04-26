@@ -29,9 +29,10 @@ import { useNotificationContext } from '@/context/notification';
 const DivisionPage = () => {
   const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
+  const [count, setCount] = useState(0);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -40,12 +41,12 @@ const DivisionPage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (page === 0) return;
     setLoading(true)
     fetch(`/api/division?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject)
+        setData(resObject.data);
+        setCount(resObject.total);
         setLoading(false)
       })
   }, [page, rowPerPage])
@@ -74,10 +75,11 @@ const DivisionPage = () => {
     }
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/division?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/division?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject);
+        setData(resObject.data);
+        setCount(resObject.total);
         setLoading(false);
       })
   }
@@ -105,10 +107,11 @@ const DivisionPage = () => {
           setSelectedRow(null);
 
           setLoading(true);
-          fetch(`/api/division?page=${page || 1}&limit=${rowPerPage}`)
+          fetch(`/api/division?page=${page}&limit=${rowPerPage}`)
             .then((res) => res.json())
             .then((resObject) => {
-              setData(resObject)
+              setData(resObject.data);
+              setCount(resObject.total);
               setLoading(false);
             })
         })
@@ -165,6 +168,7 @@ const DivisionPage = () => {
         <Box style={{ height: 700, width: '100%' }}>
           <DataGrid
             rows={data}
+            rowCount={count}
             columns={TABLE_HEADER(handleTriggerAction)}
             disableSelectionOnClick
             disableColumnMenu
@@ -172,6 +176,7 @@ const DivisionPage = () => {
             pagination
             page={page}
             pageSize={rowPerPage}
+            paginationMode="server"
             rowsPerPageOptions={[10, 20, 50]}
             onPageChange={setPage}
             onPageSizeChange={setRowPerPage}

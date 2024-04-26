@@ -61,7 +61,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
             Lokasi:
           </Typography>
           <Typography variant="body1" gutterBottom>
-            {detail.office?.name}
+            {detail.office?.name || <> - Lokasi telah dihapus -</>}
           </Typography>
         </Box>
          <Box sx={{ width: '100%', marginBottom: 2 }}>
@@ -95,25 +95,6 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
             </Typography>
           </Box>
         </Box>
-
-        {/* <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Lokasi (lat):
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.phone}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Lokasi (lon):
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.email}
-            </Typography>
-          </Box>
-        </Box> */}
 
         <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
           <Box sx={{ width: '50%' }}>

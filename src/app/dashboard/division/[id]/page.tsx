@@ -1,18 +1,15 @@
 'use client';
 
 import Head from 'next/head'
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Divider, Container, Skeleton } from '@mui/material';
+import { Typography, Box, Divider } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
 
 import styles from '@/styles/Dashboard.module.css'
 
-const ViewMap = dynamic(() => import('@/components/view-map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={356} /> });
-
-const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
+const DivisionDetailPage = ({ params }: { params: { id: string } }) => {
   const [isLoading, setLoading] = useState<boolean>(false)
   const [detail, setDetail] = useState<any>({})
   const { id } = params;
@@ -22,7 +19,7 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (id) {
       setLoading(true);
-      fetch(`/api/office/${id}`)
+      fetch(`/api/division/${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
           setLoading(false);
@@ -58,32 +55,10 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
           </Typography>
         </Box>
         
-
-        <Box sx={{ width: '100%', marginBottom: 2 }}>
-          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Radius:
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            {detail.radius} meter
-          </Typography>
-        </Box>
-
-        <Box sx={{ width: '100%', marginBottom: 2 }}>
-          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Durasi:
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            {detail.duration / 60 / 60 / 1000} Jam
-          </Typography>
-        </Box>
-
-        <Container disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-          <ViewMap coords={[detail.lat, detail.long]} radius={detail.radius} />
-        </Container>
         <Divider sx={{ marginBottom: 3 }} />
       </main>
     </div>
   )
 }
 
-export default OfficeDetailPage;
+export default DivisionDetailPage;

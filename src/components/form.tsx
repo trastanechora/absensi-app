@@ -24,17 +24,20 @@ export default function Form({ type }: { type: "login" | "register" }) {
         redirect: false,
         email: e.currentTarget.email.value,
         password: e.currentTarget.password.value,
+        deviceUA: localStorage.getItem("uuid"),
         // @ts-ignore
       }).then(({ error }) => {
         if (error) {
           setLoading(false);
+          // @ts-ignore
           dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal masuk, Error: ${error}`, severity: 'error' } });
         } else {
           dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil masuk, meneruskan ke halaman muka..`, severity: 'success' } });
+          console.warn('[DEBUG] myProfile', myProfile);
           router.push('/dashboard/employee');
         }
         setLoading(false);
-      });
+      })
     } else {
       fetch("/api/user/register", {
         method: "POST",

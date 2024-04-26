@@ -78,7 +78,7 @@ const OfficeDetailPage = ({ params }: { params: { id: string } }) => {
         </Box>
 
         <Container disableGutters sx={{ width: '100%', display: 'flex', marginBottom: 3 }}>
-          <ViewMap coords={[detail.lat, detail.long]} radius={detail.radius} />
+          {detail && <ViewMap coords={[detail.lat, detail.long]} radius={detail.radius} />}
         </Container>
         <Divider sx={{ marginBottom: 3 }} />
       </main>

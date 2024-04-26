@@ -28,11 +28,11 @@ const EditDivisionPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (id) {
       setLoading(true);
-      fetch(`/api/division/${id}`)
+      fetch(`/api/grade/${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
           setLoading(false);
-          setValues({ ...responseObject, duration: responseObject.duration / 60 / 60 / 1000 });
+          setValues(responseObject);
         })
     }
   }, [id]);
@@ -40,14 +40,14 @@ const EditDivisionPage = ({ params }: { params: { id: string } }) => {
   const handleSubmit = () => {
     setLoading(true)
     const body = { ...values };
-    fetch(`/api/division/${id}`, { method: 'PUT', body: JSON.stringify(body) })
+    fetch(`/api/grade/${id}`, { method: 'PUT', body: JSON.stringify(body) })
       .then((res) => res.json())
       .then((_) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil ubah data lokasi ${values.name}`, severity: 'success' } })
-        router.replace('/dashboard/division')
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil ubah data jabatan ${values.name}`, severity: 'success' } })
+        router.replace('/dashboard/grade')
         setLoading(false)
       }).catch((err) => {
-        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal ubah data lokasi, error: ${err}`, severity: 'error' } })
+        dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal ubah data jabatan, error: ${err}`, severity: 'error' } })
         setLoading(false)
       })
   }
@@ -57,7 +57,7 @@ const EditDivisionPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Ubah Detail Lokasi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Ubah Detail Jabatan | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -66,7 +66,7 @@ const EditDivisionPage = ({ params }: { params: { id: string } }) => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Ubah Data Lokasi
+            Ubah Data Jabatan
           </Typography>
         </Box>
 

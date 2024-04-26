@@ -34,6 +34,7 @@ model User {
   isStrictDuration Boolean    @default(true)
   isStrictRadius   Boolean    @default(true)
   gradeId          String?
+  loggedIn         Boolean    @default(false)
   approvals        Approval[]
   leaves           Leave[]
   presences        Presence[]
@@ -55,11 +56,11 @@ model Presence {
   clockOutDistance Int?
   clockOutLat      String?
   clockOutLong     String?
-  officeId         String
+  officeId         String?
   duration         String?
   clockInPhoto     String?
   clockOutPhoto    String?
-  office           Office    @relation(fields: [officeId], references: [id])
+  office           Office?   @relation(fields: [officeId], references: [id])
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

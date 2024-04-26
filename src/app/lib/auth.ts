@@ -41,10 +41,12 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        deviceUA: { label: "UA", type: "text" }
       },
       async authorize(credentials) {
-        const { email, password } = credentials ?? { }
+        const { email, password, deviceUA } = credentials ?? { }
+        console.log('[debug] credentials', credentials);
         if (!email || !password) {
           throw new Error("Email atau password ada yang belum diisi");
         }
@@ -57,6 +59,27 @@ export const authOptions: NextAuthOptions = {
         if (!user || !(await compare(password, user.password))) {
           throw new Error("Email atau password salah");
 				}
+
+        if (user.role !== 'admin') {
+          const isLoggedIn = user.loggedIn;
+
+          if (!isLoggedIn) {
+            const updatedUser = await prisma.user.update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                loggedIn: true
+              },
+            });
+
+            return updatedUser;
+          }
+
+          if (deviceUA !== null && deviceUA !== user.id) {
+            throw new Error("Anda hanya bisa masuk melalui satu perangkat yang sama");
+          }
+        }
 
         return user;
       },

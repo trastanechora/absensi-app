@@ -19,7 +19,13 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  return NextResponse.json(grades);
+  const count = await prisma.grade.count({
+    where: {
+      ...(filterName && { name: { contains: filterName, mode: 'insensitive' }}),
+    }
+  })
+
+  return NextResponse.json({ data: grades, total: count });
 }
 
 export async function POST(req: Request) {

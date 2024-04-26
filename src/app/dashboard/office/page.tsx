@@ -26,15 +26,16 @@ import {
 } from '@mui/material';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, statusList, initialFilterState } from '@/entity/constant/office';
+import { TABLE_HEADER, FILTER_OBJECT, initialFilterState } from '@/entity/constant/office';
 import { useNotificationContext } from '@/context/notification';
 
 const EmployeePage = () => {
   const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
+  const [count, setCount] = useState(0);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -43,13 +44,13 @@ const EmployeePage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (page === 0) return;
     setLoading(true)
     fetch(`/api/office?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject)
-        setLoading(false)
+        setData(resObject.data);
+        setCount(resObject.total);
+        setLoading(false);
       })
   }, [page, rowPerPage])
 
@@ -75,15 +76,14 @@ const EmployeePage = () => {
     if (values.searchString && values.searchType) {
       filterArray.push(`${values.searchType}=${values.searchString}`);
     }
-    if (values.status) {
-      filterArray.push(`${values.statusType}=${values.status}`);
-    }
+
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/office?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/office?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject);
+        setData(resObject.data);
+        setCount(resObject.total);
         setLoading(false);
       })
   }
@@ -111,10 +111,11 @@ const EmployeePage = () => {
           setSelectedRow(null);
 
           setLoading(true);
-          fetch(`/api/office?page=${page || 1}&limit=${rowPerPage}`)
+          fetch(`/api/office?page=${page}&limit=${rowPerPage}`)
             .then((res) => res.json())
             .then((resObject) => {
-              setData(resObject)
+              setData(resObject.data);
+              setCount(resObject.total);
               setLoading(false);
             })
         })
@@ -179,26 +180,6 @@ const EmployeePage = () => {
                   </Box>
                 </Container>
               </Container>
-              <Typography variant="caption" display="block">
-                Atau pilih berdasarkan beberapa kolom yang memiliki nilai pasti berikut:
-              </Typography>
-              <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
-                <Box sx={{ width: '50%', paddingRight: 1 }}>
-                  <FormControl fullWidth>
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                      labelId="status-label"
-                      id="status"
-                      label="Status"
-                      value={values.status}
-                      onChange={handleFilterChange('status')}
-                      fullWidth
-                    >
-                      {statusList.map((option, index) => (<MenuItem key={index} value={option.value}>{option.text}</MenuItem>))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Container>
               <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', marginTop: 2 }}>
                 <Button variant="outlined" onClick={handleResetFilter} disabled={isLoading} sx={{ width: '30%', textTransform: 'none', marginRight: 1 }}>Reset Filter</Button>
                 <Button variant="contained" onClick={handleApplyFilter} disabled={isLoading} sx={{ width: '70%', textTransform: 'none', marginLeft: 1 }}>Terapkan Filter</Button>
@@ -209,6 +190,7 @@ const EmployeePage = () => {
         <Box style={{ height: 700, width: '100%' }}>
           <DataGrid
             rows={data}
+            rowCount={count}
             columns={TABLE_HEADER(handleTriggerAction)}
             disableSelectionOnClick
             disableColumnMenu
@@ -216,6 +198,7 @@ const EmployeePage = () => {
             pagination
             page={page}
             pageSize={rowPerPage}
+            paginationMode="server"
             rowsPerPageOptions={[10, 20, 50]}
             onPageChange={setPage}
             onPageSizeChange={setRowPerPage}

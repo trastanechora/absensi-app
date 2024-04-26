@@ -4,7 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
   
-  const division = await prisma.division.findFirst({ where: { id } });
+  const division = await prisma.division.findFirst({
+    where: { id },
+    include: { users: { include: { grade: true } } }
+  });
 	return NextResponse.json(division);
 };
 

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import Head from 'next/head'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PrintIcon from '@mui/icons-material/Print';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   Accordion,
@@ -32,25 +33,43 @@ import { useNotificationContext } from '@/context/notification';
 const EmployeePage = () => {
   const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
+  const [count, setCount] = useState(0);
   const [officeOptions, setOfficeOptions] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const router = useRouter()
+  const router = useRouter();
+
+  const downloadCSV = useCallback(() => {
+    const csvContent = "data:text/csv;charset=utf-8," +
+      "Nama,Lokasi,Alamat Email,Clock In/Out Dari Luar Area,Clock In/Out Kurang Dari Durasi\n" +
+      data.map(row =>
+        `"${row.name}","${row.office?.name || '-'}","${row.email}","${row.isStrictRadius}","${row.isStrictDuration}"`
+      ).join("\n");
+
+    console.warn('[DEBUG] csvContent', csvContent);
+    const encodedUri = encodeURI(csvContent);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "list_karyawan.csv");
+    document.body.appendChild(link);
+    link.click();
+  }, [data]);
 
   useEffect(() => {
-    if (page === 0) return;
     setLoading(true)
     fetch(`/api/user?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject)
-        setLoading(false)
+        setData(resObject.data);
+        setCount(resObject.total);
+        setLoading(false);
       })
     
     fetch(`/api/office/list?page=1&limit=1000`)
@@ -90,10 +109,11 @@ const EmployeePage = () => {
     }
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/user?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/user?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject);
+        setData(resObject.data);
+        setCount(resObject.total);
         setLoading(false);
       })
   }
@@ -121,10 +141,11 @@ const EmployeePage = () => {
           setSelectedRow(null);
 
           setLoading(true);
-          fetch(`/api/user?page=${page || 1}&limit=${rowPerPage}`)
+          fetch(`/api/user?page=${page}&limit=${rowPerPage}`)
             .then((res) => res.json())
             .then((resObject) => {
-              setData(resObject)
+              setData(resObject.data);
+              setCount(resObject.total);
               setLoading(false);
             })
         })
@@ -147,6 +168,7 @@ const EmployeePage = () => {
             </Typography>
           </Box>
           <Box sx={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignSelf: 'center' }}>
+            <Button variant="contained" onClick={() => downloadCSV()} disabled={isLoading} sx={{ textTransform: 'none' }} endIcon={<PrintIcon />} style={{ marginRight: 8 }}>Cetak</Button>
             <Button variant="contained" onClick={() => router.push('/dashboard/employee/add')} disabled={isLoading} sx={{ textTransform: 'none' }}>Tambahkan Karyawan</Button>
           </Box>
         </Container>
@@ -234,6 +256,7 @@ const EmployeePage = () => {
         <Box style={{ height: 700, width: '100%' }}>
           <DataGrid
             rows={data}
+            rowCount={count}
             columns={TABLE_HEADER(handleTriggerAction)}
             disableSelectionOnClick
             disableColumnMenu
@@ -241,7 +264,8 @@ const EmployeePage = () => {
             pagination
             page={page}
             pageSize={rowPerPage}
-            rowsPerPageOptions={[10, 20, 50]}
+            paginationMode="server"
+            rowsPerPageOptions={[10, 20, 50, 100]}
             onPageChange={setPage}
             onPageSizeChange={setRowPerPage}
           />

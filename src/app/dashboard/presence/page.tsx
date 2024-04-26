@@ -11,18 +11,19 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
 import styles from '@/styles/Dashboard.module.css'
-import { TABLE_HEADER, FILTER_OBJECT, initialFilterState } from '@/entity/constant/presence';
+import { TABLE_HEADER, initialFilterState } from '@/entity/constant/presence';
 
 import { convertDateToExcelShortString } from '@/app/lib/date';
 import { convertDateToTime } from '@/app/lib/time';
 
 const PresencePage = () => {
   const [data, setData] = useState<any[]>([]);
+  const [count, setCount] = useState(0);
   const [officeOptions, setOfficeOptions] = useState<any[]>([]);
   const [employeeOptions, setEmployeeOptions] = useState<any[]>([]);
   const [expanded, setExpanded] = useState<string>('');
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
   const [search, setSearch] = useState('');
@@ -64,13 +65,13 @@ const PresencePage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (page === 0) return;
     setLoading(true)
-    fetch(`/api/presence?page=${page || 1}&limit=${rowPerPage}`)
+    fetch(`/api/presence?page=${page}&limit=${rowPerPage}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject)
-        setLoading(false)
+        setData(resObject.data);
+        setCount(resObject.total);
+        setLoading(false);
       })
     
     fetch(`/api/office/list`)
@@ -118,10 +119,11 @@ const PresencePage = () => {
 
     const joinedFilter = filterArray.join('&');
 
-    fetch(`/api/presence?page=${page || 1}&limit=${rowPerPage}&${joinedFilter}`)
+    fetch(`/api/presence?page=${page}&limit=${rowPerPage}&${joinedFilter}`)
       .then((res) => res.json())
       .then((resObject) => {
-        setData(resObject);
+        setData(resObject.data);
+        setCount(resObject.total);
         setLoading(false);
       })
   }
@@ -247,6 +249,7 @@ const PresencePage = () => {
         <Box style={{ height: 700, width: '100%' }}>
           <DataGrid
             rows={data}
+            rowCount={count}
             columns={TABLE_HEADER(handleTriggerAction)}
             disableSelectionOnClick
             disableColumnMenu
@@ -254,7 +257,8 @@ const PresencePage = () => {
             pagination
             page={page}
             pageSize={rowPerPage}
-            rowsPerPageOptions={[10, 20, 50]}
+            paginationMode="server"
+            rowsPerPageOptions={[10, 20, 50, 100]}
             onPageChange={setPage}
             onPageSizeChange={setRowPerPage}
           />

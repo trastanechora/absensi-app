@@ -21,8 +21,8 @@ const InsertPatientPage = () => {
     name: '',
     radius: 0,
     duration: 0,
-    lat: 0,
-    long: 0,
+    lat: -6.175195012186339,
+    long: 106.8272447777918,
   });
 
   const handleInputChange = (prop: string, type: string) => (event: any) => {

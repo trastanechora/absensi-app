@@ -73,6 +73,11 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 		setSearch(e.target.value);
 	}
 
+	const handleLocationChange = useCallback((coords: [number, number]) => {
+		setCoord(coords);
+		setCurrentPayload(coords)
+	}, [])
+
 	useEffect(() => {
 		if (!search && placeOptions.length !== 0) {
 			setPlaceOptions([]);
@@ -140,7 +145,7 @@ const InputMap = ({ coords, setCurrentPayload }: Props) => {
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					/>
 					{/* @ts-ignore */}
-					<CustomMapWithMarker ref={markerRef} coord={coord} setCoord={setCoord} eventHandlers={eventHandlers} />
+					<CustomMapWithMarker ref={markerRef} coord={coord} setCoord={handleLocationChange} eventHandlers={eventHandlers} />
 				</MapContainer>
 			</Box>
 		</Container>

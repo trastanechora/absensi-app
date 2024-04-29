@@ -36,7 +36,9 @@ export async function GET(req: NextRequest) {
       ...(filterOffice && { officeId: filterOffice}),
     },
     include: {
-      office: true
+      office: true,
+      grade: true,
+      divisions: true
     }
   });
 

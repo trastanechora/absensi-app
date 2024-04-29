@@ -26,9 +26,9 @@ export const initialFilterState = {
 }
 
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
-  { field: "name", headerName: "Nama Karyawan", width: 300, sortable: false },
+  { field: "name", headerName: "Nama Karyawan", sortable: false, flex: 3 },
   {
-    field: "office", headerName: "Lokasi", width: 250, sortable: false,
+    field: "office", headerName: "Lokasi", sortable: false, flex: 2,
     renderCell: (params: any) => {
       if (params.value === null) return '-'
       
@@ -39,34 +39,35 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
       )
     }
   },
-  { field: "email", headerName: "Alamat Email", width: 250, sortable: false },
+  { field: "email", headerName: "Alamat Email", sortable: false, flex: 1 },
   {
-    field: "isStrictRadius", headerName: "Clock In/Out Dari Luar Area", width: 200, sortable: false,
+    field: "isStrictRadius", headerName: "Clock In/Out Dari Luar Area", sortable: false, flex: 1,
     renderCell: (params: any) => {
       if (params.value) return "Tidak Diperbolehkan"
       return "Diperbolehkan"
     }
   },
   {
-    field: "isStrictDuration", headerName: "Clock In/Out Kurang Dari Durasi", width: 200, sortable: false,
+    field: "isStrictDuration", headerName: "Clock In/Out Kurang Dari Durasi", sortable: false, flex: 1,
     renderCell: (params: any) => {
       if (params.value) return "Tidak Diperbolehkan"
       return "Diperbolehkan"
     }
   },
-  // {
-  //   field: "status", headerName: "Status Akun", width: 200, sortable: false,
-  //   renderCell: (params: any) => {
-  //     if (params.value === 'active') return "Aktif"
-  //     return "Ditangguhkan"
-  //   }
-  // },
-  // { field: "address", headerName: "Alamat", width: 200, sortable: false },
+  {
+    field: "loggedIn", headerName: "Status Kunci Perangkat", sortable: false, flex: 1,
+    renderCell: (params: any) => {
+      console.warn('[debug] params');
+      if (!params.value) return "Belum Terkunci"
+      return "Terkunci"
+    }
+  },
+  // { field: "address", headerName: "Alamat", sortable: false },
   {
     field: 'action',
     headerName: 'Tindakan',
     sortable: false,
-    width: 370,
+    flex: 3,
     renderCell: (params: any) =>
       <ButtonGroup variant="outlined" aria-label="text button group">
         <Button onClick={() => callbackFunction('view', params)} sx={{ textTransform: 'none' }} startIcon={<VisibilityIcon />}>Detail</Button>

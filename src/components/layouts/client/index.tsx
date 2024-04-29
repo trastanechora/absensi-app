@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState, type FC, type PropsWithChildren } from 'react';
+import { type FC, type PropsWithChildren } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Box from '@mui/material/Box';
 import BottomNavigation from '@mui/material/BottomNavigation';
@@ -10,8 +10,20 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import HomeIcon from '@mui/icons-material/Home';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccountIcon from '@mui/icons-material/AccountCircle';
+import LeaveIcon from '@mui/icons-material/WorkHistory';
 import Paper from '@mui/material/Paper';
-import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Badge } from '@mui/material';
+import type { BadgeProps } from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
 
 const getAppBarTitle = (path: string) => {
   switch (path) {
@@ -61,6 +73,12 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
         >
           <BottomNavigationAction value="/app" label="Absensi" icon={<HomeIcon />} />
           <BottomNavigationAction value="/app/history" label="Riwayat" icon={<RestoreIcon />} />
+          <BottomNavigationAction disabled value="/app/leave" label="Cuti"
+            icon={
+              <StyledBadge badgeContent="Soon!" color="error">
+                <LeaveIcon />
+              </StyledBadge>
+            } />
           <BottomNavigationAction value="/app/profile" label="Profil" icon={<AccountIcon />} />
         </BottomNavigation>
       </Paper>

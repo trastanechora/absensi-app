@@ -14,6 +14,11 @@ export const menuList = [
     path: '/app/history'
   },
   {
+    text: 'Cuti',
+    icon: RestoreIcon,
+    path: '/app/history'
+  },
+  {
     text: 'Profil',
     icon: AccountIcon,
     path: '/app/profile'

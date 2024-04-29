@@ -20,7 +20,7 @@ const EmployeeDetailPage = ({ params }: { params: { id: string } }) => {
 
   const handleResetPassword = () => {
     fetch(`/api/user/${id}/reset-password`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -30,6 +30,23 @@ const EmployeeDetailPage = ({ params }: { params: { id: string } }) => {
         } else {
           const { error } = await res.json();
           dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal reset password, Error: ${error}`, severity: 'error' } });
+        }
+      });
+  }
+
+  const handleResetDeviceLock = () => {
+    fetch(`/api/user/${id}/reset-lock`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(async (res) => {
+        if (res.status === 200) {
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Reset kunci perangkat berhasil, karyawan dapat masuk ke perangkat baru`, severity: 'success' } });
+          router.push('/dashboard/employee');
+        } else {
+          const { error } = await res.json();
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal reset kunci perangkat berhasil, Error: ${error}`, severity: 'error' } });
         }
       });
   }
@@ -111,9 +128,16 @@ const EmployeeDetailPage = ({ params }: { params: { id: string } }) => {
         <Button
           onClick={handleResetPassword}
           variant="outlined"
-          sx={{ mt: 3, mb: 2 }}
+          sx={{ mt: 3 }}
         >
           Reset Password
+        </Button>
+        <Button
+          onClick={handleResetDeviceLock}
+          variant="outlined"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Reset Kunci Perangkat
         </Button>
       </main>
     </div>

@@ -54,7 +54,6 @@ export async function GET(req: NextRequest) {
     },
   })
 
-  console.log('[DEBUG] total', count);
   return NextResponse.json({ data: users, total: count });
 };
 

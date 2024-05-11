@@ -3,6 +3,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import AccountIcon from '@mui/icons-material/AccountCircle';
 import HubIcon from '@mui/icons-material/Hub';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import LeaveIcon from '@mui/icons-material/Logout';
 
 export const menuList = [
   {
@@ -19,6 +20,11 @@ export const menuList = [
     text: 'Absensi',
     icon: ContactEmergencyIcon,
     path: '/dashboard/presence'
+  },
+  {
+    text: 'Cuti',
+    icon: LeaveIcon,
+    path: '/dashboard/leave'
   },
   {
     text: 'Departemen',

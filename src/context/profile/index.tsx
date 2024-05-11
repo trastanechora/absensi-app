@@ -7,28 +7,29 @@ import type { FC } from 'react';
 import type { Props, ProfileState, ProfileAction } from './types'
 
 const initialState: ProfileState = {
+  id: '',
+  name: '',
+  status: '',
+  email: '',
+  officeId: '',
+  role: '',
+  password: '',
+  createdAt: '',
+  updatedAt: '',
+  isStrictRadius: true,
+  isStrictDuration: true,
+  office: {
     id: '',
     name: '',
-    status: '',
-    email: '',
-    officeId: '',
-    role: '',
-    password: '',
+    radius: 0,
     createdAt: '',
     updatedAt: '',
-    isStrictRadius: true,
-    isStrictDuration: true,
-    office: {
-        id: '',
-        name: '',
-        radius: 0,
-        createdAt: '',
-        updatedAt: '',
-        lat: '',
-        long: ''
-    },
+    lat: '',
+    long: ''
+  },
   presences: [],
-  refetch: () => {}
+  approvals: [],
+  refetch: () => {},
 };
 
 const ContextState = createContext<ProfileState | undefined>(undefined);
@@ -40,19 +41,24 @@ export const ProfileProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const refetch = () => {
-    fetch(`/api/me`)
+    console.warn('[DEBUG] Triger Fetch ME!');
+      fetch(`/api/me`)
       .then((res) => res.json())
       .then((resObject) => {
-        dispatch({ type: 'SET_PROFILE', payload: resObject })
+        dispatch({ type: 'SET_PROFILE', payload: resObject });
       });
   }
 
   useEffect(() => {
-    refetch();
-  }, []);
+    if (!state.id) {
+      refetch();
+    } else {
+      localStorage.setItem('uuid', state.id);
+    }
+  }, [state.id]);
 
   return (
-    <ContextState.Provider value={{ ...state, refetch }}>
+    <ContextState.Provider value={state}>
       <ContextDispatch.Provider value={dispatch}>
         {children}
       </ContextDispatch.Provider>

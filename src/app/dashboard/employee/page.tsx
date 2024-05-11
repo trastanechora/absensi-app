@@ -232,11 +232,11 @@ const EmployeePage = () => {
                 </Box>
                 <Box sx={{ width: '50%', paddingLeft: 1 }}>
                   <FormControl fullWidth>
-                    <InputLabel id="office-label">Kantor</InputLabel>
+                    <InputLabel id="office-label">Lokasi</InputLabel>
                     <Select
                       labelId="office-label"
                       id="office"
-                      label="Kantor"
+                      label="Lokasi"
                       value={values.office}
                       onChange={handleFilterChange('office')}
                       fullWidth

@@ -1,11 +1,26 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
+import cacheMiddleware from './redis';
 
-declare global {
-  var prisma: PrismaClient | undefined;
+class DBClient {
+  public prisma;
+  private static instance: DBClient;
+  private constructor() {
+    const _prisma = new PrismaClient();
+    const _prismaWithCache = _prisma.$extends(cacheMiddleware);
+
+    this.prisma = _prismaWithCache;
+  }
+
+  public static getInstance = () => {
+    if (!DBClient.instance) {
+      DBClient.instance = new DBClient();
+    }
+    return DBClient.instance;
+  }
 }
 
-const prisma = global.prisma || new PrismaClient();
+const main = () => {
+  return DBClient.getInstance().prisma;
+};
 
-if (process.env.NODE_ENV === "development") global.prisma = prisma;
-
-export default prisma;
+export default main();

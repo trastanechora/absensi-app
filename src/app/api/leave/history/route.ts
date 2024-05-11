@@ -9,20 +9,59 @@ export async function GET(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET || '',
   });
   
-  const user = await prisma.user.findUnique({
+  const leaves = await prisma.leave.findMany({
     where: {
-      id: currentAccount?.sub
+      userId: currentAccount?.sub
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
     include: {
-      leaves: {
-        orderBy: {
-          createdAt: 'desc'
+      user: {
+        select: {
+          name: true
+        }
+      },
+      approvals: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              grade: true,
+            }
+          }
         },
+        orderBy: {
+          user: {
+            grade: {
+              level: 'asc'
+            }
+          }
+        }
       }
     }
   });
 
-  const leaves = user?.leaves;
+  const approvals = await prisma.approval.findMany({
+    where: {
+      userId: currentAccount?.sub
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      leave: {
+        include: {
+          approvals: true,
+          user: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  })
 
-  return NextResponse.json(leaves);
+  return NextResponse.json({ data: { leaves, approvals } });
 };

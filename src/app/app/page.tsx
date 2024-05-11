@@ -22,6 +22,7 @@ import { convertDateToLocaleString } from '@/app/lib/date';
 const CustomMap = dynamic(() => import('@/components/map'), { ssr: false, loading: () => <Skeleton variant="rectangular" width="100%" height={300} /> })
 
 const AppHomePage = () => {
+  console.warn('[DEBUG] Rendering AppHomePage');
   const [isOpenDialogPermission, setIsOpenDialogPermission] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [submitType, setSubmitType] = useState('');
@@ -137,14 +138,6 @@ const AppHomePage = () => {
 
     setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    if (!myProfile.id) {
-      myProfile.refetch();
-    } else {
-      localStorage.setItem('uuid', myProfile.id);
-    }
-  }, [myProfile]);
 
   return (
     <div>

@@ -85,7 +85,7 @@ const AppHistoryPage = () => {
                                     {convertDateToLocaleString(new Date(presence.createdAt))}
                                   </Typography>
                                   <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
-                                    Lokasi: {presence.office.name}
+                                    Lokasi: {presence.office?.name}
                                   </Typography>
                                   <Typography sx={{ fontSize: 12 }} color="text.secondary">
                                     Durasi: {presence.duration ? presence.duration : '-'}

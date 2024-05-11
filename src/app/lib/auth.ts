@@ -17,9 +17,23 @@ export const authOptions: NextAuthOptions = {
 					where: {
 						id: token.userId as unknown as string || '',
 					},
+          include: {
+            grade: {
+              select: {
+                level: true,
+              }
+            },
+            divisions: {
+              select: {
+                id: true,
+              }
+            }
+          }
 				});
 
 				token.role = user?.role;
+				token.gradeLevel = user?.grade?.level;
+				token.divisionIds = user?.divisions?.map(division => division.id);
 			}
 			
       return token;

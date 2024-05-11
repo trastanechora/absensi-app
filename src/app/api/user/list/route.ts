@@ -7,11 +7,6 @@ export async function GET(req: NextRequest) {
   const name = req.nextUrl.searchParams.get('name');
   const email = req.nextUrl.searchParams.get('email');
 
-  console.log('[DEBUG] page', page);
-  console.log('[DEBUG] limit', limit);
-  console.log('[DEBUG] name', name);
-  console.log('[DEBUG] email', email);
-
   const users = await prisma.user.findMany({
     orderBy: {
       name: 'asc'

@@ -40,6 +40,9 @@ export interface ProfileState {
     clockOutLong: string | null;
     clockOutDistance: number | null;
   }[];
+  approvals: {
+    id: string;
+  }[]
   refetch: () => void;
 }
 

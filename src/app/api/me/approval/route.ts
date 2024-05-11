@@ -9,30 +9,39 @@ export async function GET(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET || '',
   });
 
-  const id = currentAccount?.sub || '';
-
   const user = await prisma.user.findFirst({
     where: {
-      id,
+      id: currentAccount?.sub || ''
     },
     include: {
       office: true,
-      presences: {
-        where: {
-          createdAt: {
-            gte: new Date(new Date().toLocaleDateString()),
-          }
-        }
+      approvals: true,
+      leaves: true,
+      grade: true,
+      divisions: true,
+    }
+  });
+
+  const acknowledger = await prisma.user.findMany({
+    where: {
+      id: {
+        not: user?.id,
       },
-      approvals: {
-        where: {
-          userId: id,
-          status: 'pending',
+      gradeId: user?.gradeId,
+      divisions: {
+        some: {
+          id: {
+            in: user?.divisions.map(division => division.id)
+          }
         }
       }
     },
-    cache: { ttl: 5, key: `user:${id}` },
+    include: {
+      divisions: true
+    }
   });
 
-  return NextResponse.json(user);
+  console.log('[DEBUG] acknowledger', acknowledger);
+
+  return NextResponse.json({ data: user, acknowledger });
 };

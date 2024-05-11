@@ -12,9 +12,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccountIcon from '@mui/icons-material/AccountCircle';
 import LeaveIcon from '@mui/icons-material/WorkHistory';
 import Paper from '@mui/material/Paper';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AppBar, Toolbar, IconButton, Typography, Badge } from '@mui/material';
 import type { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
+import { useProfileContext } from '@/context/profile';
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -29,8 +32,10 @@ const getAppBarTitle = (path: string) => {
   switch (path) {
     case '/app/history':
       return 'Riwayat Absensi';
+    case '/app/leave':
+      return 'Cuti'
     case '/app/profile':
-      return 'Profil Saya'
+      return 'Profil Saya';
     default:
       return 'Aplikasi Absensi'
   }
@@ -40,6 +45,7 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
 	const currentPath = usePathname();
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [myProfile] = useProfileContext();
 
   return (
     <Box sx={{ pb: 7 }} style={{ maxWidth: 430, margin: 'auto' }} ref={ref}>
@@ -62,7 +68,9 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
         </Toolbar>
       </AppBar>
       ) : null}
-      {children}
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="id">
+        {children}
+      </LocalizationProvider>
       <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3} style={{ maxWidth:430, margin: 'auto', zIndex: 100 }}>
         <BottomNavigation
           showLabels
@@ -73,9 +81,9 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
         >
           <BottomNavigationAction value="/app" label="Absensi" icon={<HomeIcon />} />
           <BottomNavigationAction value="/app/history" label="Riwayat" icon={<RestoreIcon />} />
-          <BottomNavigationAction disabled value="/app/leave" label="Cuti"
+          <BottomNavigationAction value="/app/leave" label="Cuti"
             icon={
-              <StyledBadge badgeContent="Soon!" color="error">
+              <StyledBadge badgeContent={myProfile.approvals.length} color="error">
                 <LeaveIcon />
               </StyledBadge>
             } />

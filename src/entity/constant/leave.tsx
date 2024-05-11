@@ -19,28 +19,20 @@ export const initialFilterState = {
   dateStartType: 'start',
   dateEnd: null,
   dateEndType: 'end',
-  office: '',
-  officeType: 'office'
+  status: '',
+  statusType: 'status'
 };
 
 export const statusList = [
   {
-    text: 'Aktif',
-    value: 'active'
+    text: 'Pending',
+    value: 'pending'
   },
   {
-    text: 'Tidak Aktif',
-    value: 'inactive'
+    text: 'Disetujui',
+    value: 'approved'
   }
 ];
-
-const NoMaxWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))({
-  [`& .${tooltipClasses.tooltip}`]: {
-    maxWidth: 'none',
-  },
-});
 
 export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => void) => [
   {
@@ -53,19 +45,19 @@ export const TABLE_HEADER = (callbackFunction: (type: string, dataRow: any) => v
   },
   {
     field: "dayCount", headerName: "Durasi (dalam hari)", width: 300, sortable: false,
-    renderCell: (params: any) => (
-      <Button variant="text" startIcon={<PlaceIcon />}>
-        {params.row.office.name}
-      </Button>
-    )
+    renderCell: (params: any) => (`${params.row.dayCount} Hari`)
   },
   {
-    field: "date", headerName: "Tanggal", width: 300, sortable: false,
+    field: "duration", headerName: "Durasi (dalam tanggal)", width: 300, sortable: false,
+    renderCell: (params: any) => convertDateToLocaleString(new Date(params.row.dateStart)) + ' - ' + convertDateToLocaleString(new Date(params.row.dateEnd))
+  },
+  {
+    field: "date", headerName: "Tanggal Pengajuan", width: 300, sortable: false,
     renderCell: (params: any) => convertDateToLocaleString(new Date(params.row.createdAt))
   },
   {
     field: "status", headerName: "Status", width: 300, sortable: false,
-    renderCell: (params: any) => params.row.duration || '-',
+    renderCell: (params: any) => params.row.status || '-',
   },
   {
     field: 'action',

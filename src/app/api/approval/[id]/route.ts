@@ -30,7 +30,28 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         id,
       },
       data: payload,
-    })
+    });
+
+    const pendingApprovals = await prisma.approval.findMany({
+      where: {
+        type: 'approval',
+        status: 'pending',
+        leaveId: updatedApproval.leaveId,
+      }
+    });
+
+    console.log(JSON.stringify(pendingApprovals))
+
+    if (pendingApprovals.length === 0) {
+      await prisma.leave.update({
+        where: {
+          id: updatedApproval.leaveId,
+        },
+        data: {
+          status: 'approved'
+        },
+      });
+    }
 
     return NextResponse.json(updatedApproval);
   } else {

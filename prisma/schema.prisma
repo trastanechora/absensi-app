@@ -86,7 +86,7 @@ model Leave {
   userId    String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  dateEnt   DateTime
+  dateEnd   DateTime
   dateStart DateTime
   dayCount  Int
   status    String

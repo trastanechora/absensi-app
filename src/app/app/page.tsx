@@ -82,9 +82,9 @@ const AppHomePage = () => {
           fetch('/api/presence/clock-in', requestOptions)
             .then((res) => res.json())
             .then((_) => {
-                myProfile.refetch();
                 dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil Clock In`, severity: 'success' } })
                 setIsLoading(false);
+                window.location.reload();
               }).catch((err) => {
                 dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Gagal Clock In, error: ${err}`, severity: 'error' } })
                 setIsLoading(false);

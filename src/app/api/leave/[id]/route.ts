@@ -50,6 +50,6 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     return NextResponse.json(deletedLeave);
   } else {
-    return NextResponse.json({ error: "Akun tidak dapat ditemukan" }, { status: 400 });
+    return NextResponse.json({ error: "Data cuti tidak dapat ditemukan" }, { status: 400 });
   }
 };

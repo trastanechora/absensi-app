@@ -49,3 +49,25 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: "Your presence not recorded yet, please clock in first" }, { status: 400 });
   }
 };
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  
+  const presence = await prisma.presence.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (presence) {
+    const deletedPresence = await prisma.presence.delete({
+      where: {
+        id,
+      },
+    })
+
+    return NextResponse.json(deletedPresence);
+  } else {
+    return NextResponse.json({ error: "Data absensi tidak dapat ditemukan" }, { status: 400 });
+  }
+};

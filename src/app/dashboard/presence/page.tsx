@@ -6,17 +6,19 @@ import Head from 'next/head'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PrintIcon from '@mui/icons-material/Print';
 import { DataGrid } from '@mui/x-data-grid';
-import { Autocomplete, Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
+import { Autocomplete, Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 
 import styles from '@/styles/Dashboard.module.css'
 import { TABLE_HEADER, initialFilterState } from '@/entity/constant/presence';
+import { useNotificationContext } from '@/context/notification';
 
 import { convertDateToExcelShortString } from '@/app/lib/date';
 import { convertDateToTime } from '@/app/lib/time';
 
 const PresencePage = () => {
+  const [_, dispatch] = useNotificationContext();
   const [data, setData] = useState<any[]>([]);
   const [count, setCount] = useState(0);
   const [officeOptions, setOfficeOptions] = useState<any[]>([]);
@@ -27,6 +29,8 @@ const PresencePage = () => {
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [values, setValues] = useState(initialFilterState);
   const [search, setSearch] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const downloadCSV = useCallback(() => {
     const csvContent = "data:text/csv;charset=utf-8," +
@@ -132,10 +136,33 @@ const PresencePage = () => {
     if (type === 'view') {
       router.push(`/dashboard/presence/${rowData.row.id}`);
     } else {
-      // TODO: add delete mechanism
-      console.warn('delete', rowData);
+      setSelectedRow(rowData);
+      setDeleteDialogOpen(true);
     }
   }
+
+  const handleOnDelete = useCallback(() => {
+    if (selectedRow !== null) {
+      // @ts-ignore
+      fetch(`/api/presence/${selectedRow.id}`, { method: 'DELETE' })
+        .then((res) => res.json())
+        .then(() => {
+          setDeleteDialogOpen(false);
+          // @ts-ignore
+          dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menghapus lokasi dengan nama ${selectedRow?.row?.name}`, severity: 'success' } });
+          setSelectedRow(null);
+
+          setLoading(true);
+          fetch(`/api/presence?page=${page}&limit=${rowPerPage}`)
+            .then((res) => res.json())
+            .then((resObject) => {
+              setData(resObject.data);
+              setCount(resObject.total);
+              setLoading(false);
+            })
+        })
+    }
+  }, [selectedRow, dispatch, page, rowPerPage]);
 
   return (
     <div className={styles.container}>
@@ -263,6 +290,28 @@ const PresencePage = () => {
             onPageSizeChange={setRowPerPage}
           />
         </Box>
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Apakah Anda yakin?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {/* @ts-ignore */}
+              Data akan hilang dan tidak dapat dikembalikan setelah dihapus. Yakin data absensi ini akan dihapus?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Tidak</Button>
+            <Button onClick={handleOnDelete} autoFocus>
+              Ya
+            </Button>
+          </DialogActions>
+        </Dialog>
       </main>
     </div>
   )

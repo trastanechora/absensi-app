@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Typography, Box, Divider } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 
 import { convertDateToLocaleString } from '@/app/lib/date';
 import { convertDateToTime } from '@/app/lib/time';
@@ -69,7 +70,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
             Durasi:
           </Typography>
           <Typography variant="body1" gutterBottom>
-            {detail.duration}
+            {detail.duration ? detail.duration : 'Belum ada data'}
           </Typography>
         </Box>
         <Divider sx={{ marginBottom: 3 }} />
@@ -118,43 +119,46 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
         <Typography sx={{ paddingBottom: 0 }} variant="h6" display="block" color="primary" gutterBottom>
           Clock Out:
         </Typography>
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Tanggal:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {convertDateToLocaleString(new Date(detail.clockOutDate))}
-            </Typography>
-          </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Waktu:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {convertDateToTime(new Date(detail.clockOutDate))}
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Jarak ke Titik Lokasi:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.clockOutDistance}m
-            </Typography>
-          </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Foto:
-            </Typography>
-            <Box sx={{ width: '200px', height: '300px' }}>
-              <img src={detail.clockOutPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} alt="Clock out photo" />
+        {detail.clockOutDate && <Container disableGutters>
+          <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+            <Box sx={{ width: '50%' }}>
+              <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+                Tanggal:
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                {convertDateToLocaleString(new Date(detail.clockOutDate))}
+              </Typography>
+            </Box>
+            <Box sx={{ width: '50%' }}>
+              <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+                Waktu:
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                {convertDateToTime(new Date(detail.clockOutDate))}
+              </Typography>
             </Box>
           </Box>
-        </Box>
+
+          <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
+            <Box sx={{ width: '50%' }}>
+              <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+                Jarak ke Titik Lokasi:
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                {detail.clockOutDistance}m
+              </Typography>
+            </Box>
+            <Box sx={{ width: '50%' }}>
+              <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
+                Foto:
+              </Typography>
+              <Box sx={{ width: '200px', height: '300px' }}>
+                <img src={detail.clockOutPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} alt="Clock out photo" />
+              </Box>
+            </Box>
+          </Box>
+        </Container>}
+        {!detail.clockOutDate && <Container disableGutters style={{ marginBottom: 8 }}>Belum ada data</Container>}
         <Divider sx={{ marginBottom: 3 }} />
       </main>
     </div>

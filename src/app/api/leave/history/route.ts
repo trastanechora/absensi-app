@@ -10,6 +10,8 @@ export async function GET(req: NextRequest) {
   });
   
   const leaves = await prisma.leave.findMany({
+    skip: 0,
+    take: 10,
     where: {
       userId: currentAccount?.sub
     },
@@ -43,6 +45,8 @@ export async function GET(req: NextRequest) {
   });
 
   const approvals = await prisma.approval.findMany({
+    skip: 0,
+    take: 20,
     where: {
       userId: currentAccount?.sub
     },

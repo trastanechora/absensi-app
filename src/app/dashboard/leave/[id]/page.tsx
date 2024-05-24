@@ -6,6 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Typography, Box, Divider } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
 
 import { convertDateToLocaleString } from '@/app/lib/date';
 import { convertDateToTime } from '@/app/lib/time';
@@ -21,7 +25,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (id) {
       setLoading(true);
-      fetch(`/api/presence/${id}`)
+      fetch(`/api/leave/${id}`)
         .then((res) => res.json())
         .then((responseObject) => {
           setLoading(false);
@@ -35,7 +39,7 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Detail Absensi | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
+        <title>Detail Cuti | WASKITA - ABIPRAYA JO | Sistem Manajemen Absensi</title>
         <meta name="description" content="Sistem Manajemen Absensi" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -44,117 +48,60 @@ const PresenceDetailPage = ({ params }: { params: { id: string } }) => {
         <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
           <Button variant="outlined" onClick={() => router.back()} startIcon={<ChevronLeftIcon />} sx={{ marginRight: 3, textTransform: 'none' }}>Kembali</Button>
           <Typography variant="h4" color="primary" sx={{ fontWeight: 600, marginBottom: 3 }}>
-            Detail Absensi
+            Detail Cuti
           </Typography>
         </Box>
 
-        <Box sx={{ width: '100%', marginBottom: 2 }}>
-          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Nama Karyawan:
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            {detail.user?.name}
-          </Typography>
-        </Box>
-        <Box sx={{ width: '100%', marginBottom: 2 }}>
-          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Lokasi:
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            {detail.office?.name || <> - Lokasi telah dihapus -</>}
-          </Typography>
-        </Box>
-         <Box sx={{ width: '100%', marginBottom: 2 }}>
-          <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-            Durasi:
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            {detail.duration}
-          </Typography>
-        </Box>
-        <Divider sx={{ marginBottom: 3 }} />
-
-        <Typography sx={{ paddingBottom: 0 }} variant="h6" display="block" color="primary" gutterBottom>
-          Clock In:
-        </Typography>
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Tanggal:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {convertDateToLocaleString(new Date(detail.clockInDate))}
-            </Typography>
+        <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
+          <Box sx={{ width: '100%', display: 'flex', maxWidth: 'none' }}>
+            <b>Tanggal Cuti:</b>
           </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Waktu:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {convertDateToTime(new Date(detail.clockInDate))}
-            </Typography>
+          <Box sx={{ width: '100%' }}>
+            {detail.dateStart === detail.dateEnd && convertDateToLocaleString(new Date(detail.dateStart))}
+            {detail.dateStart !== detail.dateEnd && `${convertDateToLocaleString(new Date(detail.dateStart))} - ${convertDateToLocaleString(new Date(detail.dateEnd))}`}
           </Box>
-        </Box>
-
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Jarak ke Titik Lokasi:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.clockInDistance}m
-            </Typography>
+        </Container>
+        <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', marginTop: 2 }}>
+          <Box sx={{ width: '100%', display: 'flex', maxWidth: 'none' }}>
+            <b>Hari Terhitung:</b>
           </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Foto:
-            </Typography>
-            <Box sx={{ width: '200px', height: '300px' }}>
-              <img src={detail.clockInPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} alt="Clock in photo" />
-            </Box>
+          <Box sx={{ width: '100%' }}>
+            {detail.dayCount}
           </Box>
-        </Box>
-
-        <Typography sx={{ paddingBottom: 0 }} variant="h6" display="block" color="primary" gutterBottom>
-          Clock Out:
-        </Typography>
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Tanggal:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {convertDateToLocaleString(new Date(detail.clockOutDate))}
-            </Typography>
+        </Container>
+        <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', marginTop: 2 }}>
+          <Box sx={{ width: '100%', display: 'flex', maxWidth: 'none' }}>
+            <b>Status:</b>
           </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Waktu:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {convertDateToTime(new Date(detail.clockOutDate))}
-            </Typography>
+          <Box sx={{ width: '100%' }}>
+            {detail.status}
           </Box>
-        </Box>
-
-        <Box sx={{ width: '100%', display: 'flex', marginBottom: 1 }}>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Jarak ke Titik Lokasi:
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {detail.clockOutDistance}m
-            </Typography>
+        </Container>
+        <Container maxWidth={false} disableGutters sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', marginTop: 2 }}>
+          <Box sx={{ width: '100%', display: 'flex', maxWidth: 'none' }}>
+            <b>Persetujuan:</b>
           </Box>
-          <Box sx={{ width: '50%' }}>
-            <Typography sx={{ paddingBottom: 0 }} variant="caption" display="block" color="primary" gutterBottom>
-              Foto:
-            </Typography>
-            <Box sx={{ width: '200px', height: '300px' }}>
-              <img src={detail.clockOutPhoto} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto' }} alt="Clock out photo" />
-            </Box>
+          <Box sx={{ width: '100%' }}>
+            <Stepper activeStep={-1} orientation="vertical">
+              {detail.approvals?.map(approval => {
+                const copyApproved = approval.type === 'acknoledge' ? 'Telah mengetahui' : 'Telah menyetujui';
+                const copyWaiting = approval.type === 'acknoledge' ? 'Pemberitahuan terkirim' : 'Menunggu persetujuan';
+                return (
+                  <Step key={approval.id}>
+                    <StepLabel
+                      optional={
+                        approval.status === 'approved'
+                          ? <Typography sx={{ color: 'green' }} variant="caption">{copyApproved}</Typography>
+                          : <Typography sx={{ color: 'orange' }} variant="caption">{copyWaiting}</Typography>}
+                    >
+                      {approval.user.name} {approval.type === 'acknoledge' ? '(Opsional)' : '' }
+                    </StepLabel>
+                  </Step>
+                )
+              })}
+            </Stepper>
           </Box>
-        </Box>
+        </Container>
         <Divider sx={{ marginBottom: 3 }} />
       </main>
     </div>

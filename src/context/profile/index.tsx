@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useReducer, Dispatch, useEffect } from 'react';
+import { createContext, useContext, useReducer, Dispatch, useEffect, useCallback } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { reducer } from './reducer'
 
 import type { FC } from 'react';
@@ -36,18 +37,23 @@ const ContextState = createContext<ProfileState | undefined>(undefined);
 const ContextDispatch = createContext<Dispatch<ProfileAction> | undefined>(undefined);
 
 export const ProfileProvider: FC<Props> = (props) => {
-  console.warn('[DEBUG] rendering ProfileProvider');
+  const pathname = usePathname();
+  const router = useRouter();
+  console.warn('[DEBUG] rendering ProfileProvider', pathname);
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const refetch = () => {
+  const refetch = useCallback(() => {
     console.warn('[DEBUG] Triger Fetch ME!');
       fetch(`/api/me`)
       .then((res) => res.json())
       .then((resObject) => {
         dispatch({ type: 'SET_PROFILE', payload: resObject });
+        if (pathname === '/login' || pathname === '/') {
+          router.replace('/app');
+        }
       });
-  }
+  }, [pathname, router])
 
   useEffect(() => {
     if (!state.id) {
@@ -55,7 +61,7 @@ export const ProfileProvider: FC<Props> = (props) => {
     } else {
       localStorage.setItem('uuid', state.id);
     }
-  }, [state.id]);
+  }, [refetch, state.id]);
 
   return (
     <ContextState.Provider value={state}>

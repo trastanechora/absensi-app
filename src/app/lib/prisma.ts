@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import cacheMiddleware from './redis';
 
+declare const globalThis: {
+  prismaGlobal: DBClient['prisma'];
+} & typeof global;
+
 class DBClient {
   public prisma;
   private static instance: DBClient;
@@ -20,7 +24,10 @@ class DBClient {
 }
 
 const main = () => {
-  return DBClient.getInstance().prisma;
+  const prisma = globalThis.prismaGlobal ?? DBClient.getInstance().prisma;
+  return prisma;
 };
 
 export default main();
+
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = main();

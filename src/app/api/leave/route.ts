@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     return { type: 'approval', status: 'pending', leaveId: leave.id, userId: id }
   });
   const acknoledgeData = acknolwledgeIds.map((id: string) => {
-    return { type: 'approval', status: 'pending', leaveId: leave.id, userId: id }
+    return { type: 'acknoledge', status: 'pending', leaveId: leave.id, userId: id }
   });
 
   const approvals = await prisma.approval.createMany({

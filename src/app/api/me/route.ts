@@ -23,12 +23,6 @@ export async function GET(req: NextRequest) {
             gte: new Date(new Date().toLocaleDateString()),
           }
         }
-      },
-      approvals: {
-        where: {
-          userId: id,
-          status: 'pending',
-        }
       }
     },
     cache: { ttl: 5, key: `user:${id}` },

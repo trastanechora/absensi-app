@@ -16,6 +16,9 @@ export async function GET(req: NextRequest) {
     include: {
       users: {
         where: {
+          NOT: {
+            id: currentAccount?.sub
+          },
           divisions: {
             some: {
               id: {

@@ -86,10 +86,10 @@ model Leave {
   userId    String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  dateEnd   DateTime
   dateStart DateTime
   dayCount  Int
   status    String
+  dateEnd   DateTime
   approvals Approval[]
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

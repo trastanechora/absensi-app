@@ -15,18 +15,6 @@ import Paper from '@mui/material/Paper';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AppBar, Toolbar, IconButton, Typography, Badge } from '@mui/material';
-import type { BadgeProps } from '@mui/material/Badge';
-import { styled } from '@mui/material/styles';
-import { useProfileContext } from '@/context/profile';
-
-const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    right: -3,
-    top: 13,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: '0 4px',
-  },
-}));
 
 const getAppBarTitle = (path: string) => {
   switch (path) {
@@ -42,10 +30,9 @@ const getAppBarTitle = (path: string) => {
 }
 
 const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
-	const currentPath = usePathname();
+  const currentPath = usePathname();
   const ref = React.useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [myProfile] = useProfileContext();
 
   return (
     <Box sx={{ pb: 7 }} style={{ maxWidth: 430, margin: 'auto' }} ref={ref}>
@@ -81,12 +68,7 @@ const ClientAppLayout: FC<PropsWithChildren> = ({ children }) => {
         >
           <BottomNavigationAction value="/app" label="Absensi" icon={<HomeIcon />} />
           <BottomNavigationAction value="/app/history" label="Riwayat" icon={<RestoreIcon />} />
-          <BottomNavigationAction value="/app/leave" label="Cuti"
-            icon={
-              <StyledBadge badgeContent={myProfile.approvals.length} color="error">
-                <LeaveIcon />
-              </StyledBadge>
-            } />
+          <BottomNavigationAction value="/app/leave" label="Cuti" icon={<LeaveIcon />} />
           <BottomNavigationAction value="/app/profile" label="Profil" icon={<AccountIcon />} />
         </BottomNavigation>
       </Paper>

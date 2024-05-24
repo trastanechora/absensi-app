@@ -26,19 +26,32 @@ import {
   Typography,
   Autocomplete,
   TextField,
+  Badge
 } from '@mui/material';
+import type { BadgeProps } from '@mui/material/Badge';
+import LeaveIcon from '@mui/icons-material/WorkHistory';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from "next/navigation";
 import ApprovedIcon from '@mui/icons-material/CheckCircleOutline';
 import PendingIcon from '@mui/icons-material/HelpOutline';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import { styled } from '@mui/material/styles';
 
 import { useNotificationContext } from '@/context/notification';
 import { convertDateToLocaleString } from '@/app/lib/date';
 
 import type { Leave } from '@/entity/model/leave';
 import type { Approval } from '@/entity/model/approval';
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+    paddingLeft: 30,
+  },
+}));
 
 const AppProfilePage = () => {
   const [_, dispatch] = useNotificationContext();
@@ -75,6 +88,11 @@ const AppProfilePage = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (values.dateStart === null || values.dateEnd === null) {
+      dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: 'Mohon isi tanggal cuti', severity: 'error' } });
+      return;
+    }
+
     console.warn('[DEBUG] values', values);
     const acknolwledgeIds: string[] = [];
     const approvalIds: string[] = [];
@@ -86,7 +104,7 @@ const AppProfilePage = () => {
       }
     });
 
-    console.warn('[DEBUG] values', { acknolwledgeIds, approvalIds });
+    console.warn('[DEBUG] payload', { acknolwledgeIds, approvalIds });
     
     fetch("/api/leave", {
         method: "POST",
@@ -139,9 +157,10 @@ const AppProfilePage = () => {
           dispatch({ type: 'OPEN_NOTIFICATION', payload: { message: `Berhasil menyetujui ijin cuti untuk ${selectedApproval.current.title}`, severity: 'success' } });
 
           setIsLoading(true);
+          router.push("/app");
         })
     }
-  }, [dispatch]);
+  }, [dispatch, router]);
 
   const handleFetchApprovalList = useCallback(() => {
     if (fetchApprovalList.current) return;
@@ -154,7 +173,11 @@ const AppProfilePage = () => {
         // setValues
         const approvers: { id: string, name: string }[][] = [];
         responseObject.data.forEach((approver: { users: { id: string, name: string }[] }, index: number) => {
-          approvers[index] = [approver.users[0]]
+          if (index !== 0) {
+            approvers[index] = [approver.users[0]];
+          } else {
+            approvers[index] = [];
+          }
         });
 
         setValues(old => {
@@ -166,6 +189,10 @@ const AppProfilePage = () => {
     fetchApprovalList.current = true;
     console.warn('[DEBUG] fetching approval list');
   }, []);
+
+  console.warn('[DEBUG] values', values);
+
+  const activeNotificationCount = listApprovalRef.current.filter(approval => approval.status === 'pending').length;
 
   return (
     <div>
@@ -237,7 +264,7 @@ const AppProfilePage = () => {
                         multiple={index === 0}
                         options={approval.users}
                         getOptionLabel={(option) => option.name}
-                        defaultValue={index === 0 ? [approval.users[0]] : approval.users[0]}
+                        defaultValue={index === 0 ? [] : approval.users[0]}
                         onChange={(_, value) => handleValueChange('approvers', index)({ target: { value } })}
                         renderInput={(params) => (
                           <TextField
@@ -266,7 +293,12 @@ const AppProfilePage = () => {
               aria-controls="panel3-content"
               id="panel3-header"
             >
-              Persetujuan Saya
+              <StyledBadge badgeContent={activeNotificationCount} color="error">
+                Persetujuan Saya
+              </StyledBadge>
+              {/* {listApprovalRef.current.length !== 0 && <StyledBadge badgeContent={listApprovalRef.current.length} color="error">
+                <LeaveIcon />
+              </StyledBadge>} */}
             </AccordionSummary>
             <AccordionDetails>
               <Box sx={{ mt: 1 }}>
@@ -404,13 +436,15 @@ const AppProfilePage = () => {
                 <Box sx={{ width: '100%' }}>
                   <Stepper activeStep={-1} orientation="vertical">
                     {selectedLeave.current.approvals?.map(approval => {
+                      const copyApproved = approval.type === 'acknoledge' ? 'Telah mengetahui' : 'Telah menyetujui';
+                      const copyWaiting = approval.type === 'acknoledge' ? 'Pemberitahuan terkirim' : 'Menunggu persetujuan';
                       return (
                         <Step key={approval.id}>
                           <StepLabel
                             optional={
                               approval.status === 'approved'
-                                ? <Typography sx={{ color: 'green' }} variant="caption">Disetujui</Typography>
-                                : <Typography sx={{ color: 'orange' }} variant="caption">Menunggu persetujuan</Typography>}
+                                ? <Typography sx={{ color: 'green' }} variant="caption">{copyApproved}</Typography>
+                                : <Typography sx={{ color: 'orange' }} variant="caption">{copyWaiting}</Typography>}
                           >
                             {approval.user.name} {approval.type === 'acknoledge' ? '(Opsional)' : '' }
                           </StepLabel>

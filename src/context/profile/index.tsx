@@ -50,6 +50,10 @@ export const ProfileProvider: FC<Props> = (props) => {
       .then((resObject) => {
         dispatch({ type: 'SET_PROFILE', payload: resObject });
         if (pathname === '/login' || pathname === '/') {
+          if (resObject.role === 'admin') {
+            router.replace('/dashboard/employee');
+            return;
+          }
           router.replace('/app');
         }
       });

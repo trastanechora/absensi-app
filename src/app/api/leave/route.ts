@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
       userId,
       status: 'pending',
       dateStart: formattedDateStart,
+      // @ts-ignore
       dateEnd: formattedDateEnd,
       dayCount: diffDays
     }
